@@ -17,6 +17,10 @@ class Base:public TObject{
   virtual TF1 *GetProbabilityDensity(Int_t itype) = 0;
   virtual void SetResponseFunction(Int_t itype,TObject *response) = 0;
   virtual void SetMatrix() = 0;
+  virtual void Print() const = 0;
+
+  TMatrix& GetMatrix() {return *fMatrix;}
+  TMatrix& GetInvMatrix() {return *fInvMatrix;}
 
  private:
   Int_t fNtype; // number of types 

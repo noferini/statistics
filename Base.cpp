@@ -7,6 +7,7 @@ Base::Base(Int_t n):
   fMatrix(NULL),
   fInvMatrix(NULL)
 {
+  if(n!=0) SetNtype(n);
 
 }
 
@@ -17,4 +18,10 @@ Base::~Base(){
 
 void Base::SetNtype(Int_t n){
   fNtype=n;
+
+  if(fMatrix) delete fMatrix;
+  if(fInvMatrix) delete fInvMatrix;
+
+  fMatrix = new TMatrix(n,n);
+  fInvMatrix = new TMatrix(n,n);
 }
