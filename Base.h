@@ -11,11 +11,11 @@ class Base:public TObject{
   ~Base();
 
   Int_t GetNtype() const {return fNtype;}
-  void SetNtype(Int_t n);
+  virtual void SetNtype(Int_t n);
 
   virtual Double_t EvaluateProb(Int_t itype,Float_t signal) = 0;
   virtual TF1 *GetProbabilityDensity(Int_t itype) = 0;
-  virtual void SetResponseFunction(Int_t itype,TObject *reponse) = 0;
+  virtual void SetResponseFunction(Int_t itype,TObject *response) = 0;
   virtual void SetMatrix() = 0;
 
  private:
