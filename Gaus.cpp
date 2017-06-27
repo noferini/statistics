@@ -33,11 +33,53 @@ Double_t Gaus::EvaluateProb(Int_t itype,Float_t signal){
 }
 
 TF1 *Gaus::GetProbabilityDensity(Int_t itype){
-  TF1 *f = new TF1(Form("f%i",itype),"gaus");
+  TF1 *f = new TF1(Form("f%i",itype),"gaus",-20,20);
   f->SetParameter(0,1./fSigma[itype]/TMath::Sqrt(2*TMath::Pi()));
   f->SetParameter(1,fMean[itype]);
   f->SetParameter(2,fSigma[itype]);
   return f;
+}
+
+TF1 *Gaus::GetProbabilityDensityStar(Int_t itype){
+  TString function("gaus(0)");
+
+  for(Int_t i=1;i < GetNtype();i++)
+    function.Append(Form("+gaus(%i)",i*3));
+  
+  TF1 *f = new TF1(Form("fstar%i",itype),function.Data(),-20,20);
+
+  for(Int_t i=0;i < GetNtype();i++){
+    f->SetParameter(i*3+0,1./fSigma[i]/TMath::Sqrt(2*TMath::Pi())*GetInvMatrix()[i][itype]);
+    f->SetParameter(i*3+1,fMean[i]);
+    f->SetParameter(i*3+2,fSigma[i]);
+  }
+
+  f->Print();
+
+  return f;
+}
+
+Double_t Gaus::ScalarProduct(Int_t itype1,Int_t itype2) {
+  TString function("(gaus(0)");
+
+  for(Int_t i=1;i < GetNtype();i++)
+    function.Append(Form("+gaus(%i)",i*3));
+
+  function.Append(Form(")*gaus(%i)",GetNtype()*3));
+  
+  TF1 *f = new TF1(Form("fSP%i_%i",itype1,itype2),function.Data(),-20,20);
+
+  for(Int_t i=0;i < GetNtype();i++){
+    f->SetParameter(i*3+0,1./fSigma[i]/TMath::Sqrt(2*TMath::Pi())*GetInvMatrix()[i][itype1]);
+    f->SetParameter(i*3+1,fMean[i]);
+    f->SetParameter(i*3+2,fSigma[i]);
+  }
+
+  f->SetParameter(GetNtype()*3+0,1./fSigma[itype2]/TMath::Sqrt(2*TMath::Pi()));
+  f->SetParameter(GetNtype()*3+1,fMean[itype2]);
+  f->SetParameter(GetNtype()*3+2,fSigma[itype2]);
+  
+  return f->Integral(-20,20);
 }
 
 void Gaus::SetResponseFunction(Int_t itype,TObject *response){
@@ -54,7 +96,7 @@ void Gaus::SetMatrix(){
 
   for(Int_t i=0;i < GetNtype();i++){
     for(Int_t j=0;j < GetNtype();j++){
-      GetMatrix()[i][j] = TMath::Exp(-(fMean[i]-fMean[j])*(fMean[i]-fMean[j])/(fSigma[i]*fSigma[i] + fSigma[j]*fSigma[j])*0.5); // to be corrected
+      GetMatrix()[i][j] = TMath::Exp(-(fMean[i]-fMean[j])*(fMean[i]-fMean[j])/(fSigma[i]*fSigma[i] + fSigma[j]*fSigma[j])*0.5)/TMath::Sqrt(2*(fSigma[i]*fSigma[i] + fSigma[j]*fSigma[j])*TMath::Pi()); // to be corrected
       GetInvMatrix()[i][j] = GetMatrix()[i][j];
     }
   }
