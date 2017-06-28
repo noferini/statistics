@@ -33,7 +33,7 @@ Double_t Gaus::EvaluateProb(Int_t itype,Float_t signal){
 }
 
 TF1 *Gaus::GetProbabilityDensity(Int_t itype){
-  TF1 *f = new TF1(Form("f%i",itype),"gaus",-20,20);
+  TF1 *f = new TF1(Form("f%i",itype),"gaus",-10,10);
   f->SetParameter(0,1./fSigma[itype]/TMath::Sqrt(2*TMath::Pi()));
   f->SetParameter(1,fMean[itype]);
   f->SetParameter(2,fSigma[itype]);
@@ -46,15 +46,13 @@ TF1 *Gaus::GetProbabilityDensityStar(Int_t itype){
   for(Int_t i=1;i < GetNtype();i++)
     function.Append(Form("+gaus(%i)",i*3));
   
-  TF1 *f = new TF1(Form("fstar%i",itype),function.Data(),-20,20);
+  TF1 *f = new TF1(Form("fstar%i",itype),function.Data(),-10,10);
 
   for(Int_t i=0;i < GetNtype();i++){
     f->SetParameter(i*3+0,1./fSigma[i]/TMath::Sqrt(2*TMath::Pi())*GetInvMatrix()[i][itype]);
     f->SetParameter(i*3+1,fMean[i]);
     f->SetParameter(i*3+2,fSigma[i]);
   }
-
-  f->Print();
 
   return f;
 }
@@ -67,7 +65,7 @@ Double_t Gaus::ScalarProduct(Int_t itype1,Int_t itype2) {
 
   function.Append(Form(")*gaus(%i)",GetNtype()*3));
   
-  TF1 *f = new TF1(Form("fSP%i_%i",itype1,itype2),function.Data(),-20,20);
+  TF1 *f = new TF1(Form("fSP%i_%i",itype1,itype2),function.Data(),-10,10);
 
   for(Int_t i=0;i < GetNtype();i++){
     f->SetParameter(i*3+0,1./fSigma[i]/TMath::Sqrt(2*TMath::Pi())*GetInvMatrix()[i][itype1]);
@@ -79,7 +77,7 @@ Double_t Gaus::ScalarProduct(Int_t itype1,Int_t itype2) {
   f->SetParameter(GetNtype()*3+1,fMean[itype2]);
   f->SetParameter(GetNtype()*3+2,fSigma[itype2]);
   
-  return f->Integral(-20,20);
+  return f->Integral(-10,10);
 }
 
 void Gaus::SetResponseFunction(Int_t itype,TObject *response){
