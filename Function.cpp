@@ -69,7 +69,7 @@ Double_t Function::ScalarProductOrFunc(Int_t itype1,Int_t itype2) {
     namefunc.Append("_");
     namefunc.Append(GetProbabilityDensity(itype2)->GetName());
 
-    fFuncSPor[itype1*GetNtype() + itype2] = new TF1(namefunc.Data(),function.Data(),-10,10);
+    fFuncSPor[itype1*GetNtype() + itype2] = new TF1(namefunc.Data(),function.Data(),-20,20);
 
 
     for(Int_t i=0;i < GetProbabilityDensity(itype1)->GetNpar();i++)
@@ -124,7 +124,7 @@ void Function::SetMatrix(){
 
     function.Append(")");
 
-    fFuncStar[i] = new TF1(namefunc.Data(),function.Data(),-10,10);
+    fFuncStar[i] = new TF1(namefunc.Data(),function.Data(),-20,20);
 
 
     for(Int_t j=0;j < GetNtype();j++){
@@ -140,7 +140,7 @@ void Function::SetMatrix(){
       
       function2.Append(")");
 
-      fFuncSP[i*GetNtype() + j] = new TF1(namefunc2.Data(),function2.Data(),-10,10);
+      fFuncSP[i*GetNtype() + j] = new TF1(namefunc2.Data(),function2.Data(),-20,20);
     }
   }
 }
