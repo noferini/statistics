@@ -1,91 +1,101 @@
 #include "Function.h"
 #include <stdio.h>
 #include "TMath.h"
+// #include "Math/GSLIntegrator.h"
+// #include "Math/WrappedTF1.h"
 
 ClassImp(Function);
 
 Function::Function(Int_t n):
   Base(n),
-  fMean(NULL),
-  fSigma(NULL)
+  fFunc(NULL),
+  fFuncStar(NULL),
+  fFuncSP(NULL),
+  fFuncSPor(NULL)
 {
   if(n!=0) SetNtype(n);
 }
 
 Function::~Function(){
-  if(fMean) delete fMean;
-  if(fSigma) delete fSigma;
-
+  if(fFunc) delete fFunc;
+  if(fFuncStar) delete fFuncStar;
+  if(fFuncSP) delete fFuncSP;
+  if(fFuncSPor) delete fFuncSPor;
 }
 
 void Function::SetNtype(Int_t n){
   Base::SetNtype(n);
 
-  if(fMean) delete fMean;
-  if(fSigma) delete fSigma;
+  if(fFunc) delete fFunc;
+  if(fFuncStar) delete fFuncStar;
+  if(fFuncSP) delete fFuncSP;
+  if(fFuncSPor) delete fFuncSPor;
 
-  fMean = new Float_t(n);
-  fSigma = new Float_t(n);
+  fFunc = new TF1*[n];
+  fFuncStar = new TF1*[n];
+  fFuncSP = new TF1*[n*n];
+  fFuncSPor = new TF1*[n*n];
+
+  for(Int_t i=0; i < n;i++){
+    fFunc[i] = NULL;
+    fFuncStar[i] = NULL;
+    for(Int_t j=0; j < n;j++){
+      fFuncSP[i*3+j] = NULL;
+      fFuncSPor[i*3+j] = NULL;
+    }
+  }
+
 }
 
 Double_t Function::EvaluateProb(Int_t itype,Float_t signal){
-  return TMath::Exp(-(signal-fMean[itype])*(signal-fMean[itype])*0.5/fSigma[itype]/fSigma[itype])/fSigma[itype]/TMath::Sqrt(2*TMath::Pi());
+  return GetProbabilityDensityStar(itype)->Eval(signal);
 }
 
 TF1 *Function::GetProbabilityDensity(Int_t itype){
-  TF1 *f = new TF1(Form("f%i",itype),"gaus",-10,10);
-  f->SetParameter(0,1./fSigma[itype]/TMath::Sqrt(2*TMath::Pi()));
-  f->SetParameter(1,fMean[itype]);
-  f->SetParameter(2,fSigma[itype]);
-  return f;
+  return fFunc[itype];
 }
 
 TF1 *Function::GetProbabilityDensityStar(Int_t itype){
-  TString function("gaus(0)");
+  return fFuncStar[itype];
+}
 
-  for(Int_t i=1;i < GetNtype();i++)
-    function.Append(Form("+gaus(%i)",i*3));
-  
-  TF1 *f = new TF1(Form("fstar%i",itype),function.Data(),-10,10);
+Double_t Function::ScalarProductOrFunc(Int_t itype1,Int_t itype2) {
+  if(!fFuncSPor[itype1*GetNtype() + itype2]){
+    TString function(GetProbabilityDensity(itype1)->GetName());
+    function.Append(" * ");
+    function.Append(GetProbabilityDensity(itype2)->GetName());
+    
+    TString namefunc(GetProbabilityDensity(itype1)->GetName());
+    namefunc.Append("_");
+    namefunc.Append(GetProbabilityDensity(itype2)->GetName());
 
-  for(Int_t i=0;i < GetNtype();i++){
-    f->SetParameter(i*3+0,1./fSigma[i]/TMath::Sqrt(2*TMath::Pi())*GetInvMatrix()[i][itype]);
-    f->SetParameter(i*3+1,fMean[i]);
-    f->SetParameter(i*3+2,fSigma[i]);
+    fFuncSPor[itype1*GetNtype() + itype2] = new TF1(namefunc.Data(),function.Data(),-10,10);
+
+
+    for(Int_t i=0;i < GetProbabilityDensity(itype1)->GetNpar();i++)
+      fFuncSPor[itype1*GetNtype() + itype2]->SetParameter(i,GetProbabilityDensity(itype1)->GetParameter(i));
+
+    for(Int_t i=0;i < GetProbabilityDensity(itype2)->GetNpar();i++)
+      fFuncSPor[itype1*GetNtype() + itype2]->SetParameter(i+GetProbabilityDensity(itype1)->GetNpar(),GetProbabilityDensity(itype2)->GetParameter(i));
+    
+    fFuncSPor[itype1*GetNtype() + itype2]->SetNpx(10000);
+
   }
-
-  return f;
+  
+  return GetIntegral(fFuncSPor[itype1*GetNtype() + itype2]);
 }
 
 Double_t Function::ScalarProduct(Int_t itype1,Int_t itype2) {
-  TString function("(gaus(0)");
+  if(!fFuncSP[itype1*GetNtype() + itype2]){
 
-  for(Int_t i=1;i < GetNtype();i++)
-    function.Append(Form("+gaus(%i)",i*3));
-
-  function.Append(Form(")*gaus(%i)",GetNtype()*3));
-  
-  TF1 *f = new TF1(Form("fSP%i_%i",itype1,itype2),function.Data(),-10,10);
-
-  for(Int_t i=0;i < GetNtype();i++){
-    f->SetParameter(i*3+0,1./fSigma[i]/TMath::Sqrt(2*TMath::Pi())*GetInvMatrix()[i][itype1]);
-    f->SetParameter(i*3+1,fMean[i]);
-    f->SetParameter(i*3+2,fSigma[i]);
+    return 0;
   }
-
-  f->SetParameter(GetNtype()*3+0,1./fSigma[itype2]/TMath::Sqrt(2*TMath::Pi()));
-  f->SetParameter(GetNtype()*3+1,fMean[itype2]);
-  f->SetParameter(GetNtype()*3+2,fSigma[itype2]);
-  
-  return f->Integral(-10,10);
+  return GetIntegral(fFuncSP[itype1*GetNtype() + itype2]);
 }
 
 void Function::SetResponseFunction(Int_t itype,TObject *response){
   if(itype >= GetNtype() || itype < 0) return;
-  TF1 *myfunc = (TF1 *) response;
-
-  fMean[itype] = myfunc->GetParameter(1);
-  fSigma[itype] = myfunc->GetParameter(2);
+  fFunc[itype] = (TF1 *) response;
 }
 
 void Function::SetMatrix(){
@@ -94,19 +104,60 @@ void Function::SetMatrix(){
 
   for(Int_t i=0;i < GetNtype();i++){
     for(Int_t j=0;j < GetNtype();j++){
-      GetMatrix()[i][j] = TMath::Exp(-(fMean[i]-fMean[j])*(fMean[i]-fMean[j])/(fSigma[i]*fSigma[i] + fSigma[j]*fSigma[j])*0.5)/TMath::Sqrt(2*(fSigma[i]*fSigma[i] + fSigma[j]*fSigma[j])*TMath::Pi()); // to be corrected
+      GetMatrix()[i][j] = ScalarProductOrFunc(i,j);
       GetInvMatrix()[i][j] = GetMatrix()[i][j];
     }
   }
+  GetMatrix().Print();
+
   GetInvMatrix().Invert();
 
-  GetMatrix().Print();
   GetInvMatrix().Print();
+
+  for(Int_t i=0;i < GetNtype();i++){
+    TString namefunc("T_");
+    namefunc.Append(GetProbabilityDensity(i)->GetName());
+
+    TString function(Form("((%f * %s)",GetInvMatrix()[i][0],GetProbabilityDensity(0)->GetName()));
+    for(Int_t j=1;j < GetNtype();j++)
+      function.Append(Form("+(%f * %s)",GetInvMatrix()[i][j],GetProbabilityDensity(j)->GetName()));
+
+    function.Append(")");
+
+    fFuncStar[i] = new TF1(namefunc.Data(),function.Data(),-10,10);
+
+
+    for(Int_t j=0;j < GetNtype();j++){
+      TString namefunc2("SP_");
+      TString function2(function.Data());
+      namefunc2.Append(GetProbabilityDensityStar(i)->GetName());
+      namefunc2.Append("_");
+      namefunc2.Append(GetProbabilityDensity(j)->GetName());
+
+      function2.Append("*(");
+
+      function2.Append(GetProbabilityDensity(j)->GetName());
+      
+      function2.Append(")");
+
+      fFuncSP[i*GetNtype() + j] = new TF1(namefunc2.Data(),function2.Data(),-10,10);
+    }
+  }
 }
 
 void Function::Print() const {
   printf("Function class\n");
   for(Int_t i=0;i < GetNtype();i++)
-    printf("type %i) mean = %f -- sigma = %f\n",i,fMean[i],fSigma[i]);
+    fFunc[i]->Print();
 
+}
+
+Double_t Function::GetIntegral(TF1 *f){
+  Double_t *param = 0;
+
+//   ROOT::Math::GSLIntegrator ig(1.E-9,1.E-9,10000);
+//   ROOT::Math::WrappedTF1 wf(*f);
+//   ig.SetFunction(wf);
+//   double val2 = ig.Integral(-20,20);
+  return f->Integral(-20,20,param,1e-10);
 }

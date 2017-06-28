@@ -21,10 +21,17 @@ class Function: public Base{
   void SetMatrix();
   void Print() const;
   Double_t ScalarProduct(Int_t itype1,Int_t itype2);
+  Double_t ScalarProductOrFunc(Int_t itype1,Int_t itype2);
+
+  Double_t GetIntegral(TF1 *f);
+
+  TF1 *GetSPfunction(Int_t ival) {return fFuncSP[ival];}
 
  private:
-  Float_t *fMean; // mean values
-  Float_t *fSigma; // mean values
+  TF1 **fFunc; // functions Original
+  TF1 **fFuncStar; // functions Transponed
+  TF1 **fFuncSPor; // functions scalar products
+  TF1 **fFuncSP; // functions scalar products Origin
 
   ClassDef(Function,1);
 };

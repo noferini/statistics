@@ -4,7 +4,7 @@ CC = g++
 # compiler, linker, ... flags:
 CC_FLAGS := $(shell root-config --cflags)
 LDFLAGS := $(shell root-config --ldflags)
-LIBS := $(shell root-config --glibs)
+LIBS := $(shell root-config --glibs) -lMathMore
 
 START := $(shell rm -rf LinkDef.*)
 
