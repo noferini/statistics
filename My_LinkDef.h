@@ -5,4 +5,5 @@
 
 #pragma link C++ class Base++;
 #pragma link C++ class Gaus++;
+#pragma link C++ class Function++;
 #endif
