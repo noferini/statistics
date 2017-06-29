@@ -47,3 +47,120 @@ For the case they depend on other variables (like $p_{T}$ in the case of the ALI
 
 For the reasons exposed in the previous paragraph we looked for a different definition of the probability to be independent of the assumption on the prior probabilities. In this search we discovered that replacing the Bayesian probability $P_{i}(S)$ with the detector response probability $p_{i}(S)$ even if we loosed the properties guaranteed by the Bayes theorem we gained much more.
 
+Replacing in eq.~\ref{Sec1:BasicRelation} $f(S) \rightarrow p_{k}(s)$ the
+following experession is obtained:
+\begin{equation}
+\label{Sec1:QSmain}
+\sum\limits_{j}^{M}p_{k}(S) = \sum\limits_{i=1}^{N_{type}}M_{i}\int p_{k}(S)
+p_{i}(S) dS = \sum\limits_{i=1}^{N_{type}}M_{i} a_{ki}, 
+\end{equation}
+where $a_{ki}=a_{ik}$ are quantities depending only on the detector responses
+for the different types of signals.
+They can be computed {\it a priori} if responses are well known.
+For instance in the case of Gaussian responses with constant resolution
+$\sigma$ and different value for the means ($p_{i}(S) =
+exp(-(S-\bar{S}_{i})^{2}/2\sigma^{2})/\sqrt{2\pi\sigma^{2}}$) the values can
+be calulated analitically:
+\begin{equation}
+\label{Sec1:GaussianMatrixElements}
+a_{ki} = a_{ik} = \frac{exp(-\Delta_{ik}^{2}/4)}{\sqrt{8\pi\sigma^2}},
+\end{equation}
+where $\Delta_{ik}=(\bar{S}_{i} - \bar{S}_{k})/\sigma$ represents the
+separation, in number of $\sigma$
+with respect to the measured signal, between two different classes of events.
+In the trivial case where the $\Delta_{ik}$ values are very large (for $i \neq
+k$) $a_{ki} \rightarrow \delta_{ik} / \sqrt{8\pi\sigma^2}$.
+In the case the detector responses are Gaussian but with different
+widths the previous results are still valid by replacing $\sigma$ with
+$\sigma_{ik}$,  being $\sigma_{ik}^2 = \frac{\sigma_{i}^2 + \sigma_{j}^2}{2}$.
+
+Therefore, if the $a_{ik}$ are known eq.~\ref{Sec1:QSmain} leads to the
+relation:
+\begin{equation}
+\label{Sec1:QSformula}
+\vec{O} =
+ \left(
+\begin{array}{c}
+o_1 = \sum\limits^{M} p_{1}\\
+\ldots \\
+o_{N_{type}}=\sum\limits^{M} p_{N_{type}}
+\end{array}
+\right) =
+\left(
+\begin{array}{ccc}
+a_{1,1} & \ldots & a_{1,N_{type}} \\
+\ldots & \ldots & \ldots \\
+a_{N_{types},1} & \ldots & a_{N_{type},N_{type}}
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+M_{1}\\
+\ldots \\
+M_{N_{types}}
+\end{array}
+\right) =
+\boldmath{A} \vec{M},
+\end{equation}
+where $\vec{O}$ represents the vector of observables which can be estracted by the data
+sample, $\vec{M}$ the vector with the abundaces of the classes we want to
+extract and $\boldmath{A}$ the matrix with $a_{ik}$ elements.
+
+If the $\boldmath{A}$ is known and it can be inverted (all classes are
+well separated as distributions in the variable $S$) the previous relation can
+be used to extract $\vec{M}$ from $\vec{O}$:
+\begin{equation}
+\label{Sec1:QSeqInv}
+\vec{M} = \boldmath{A^{-1}} \vec{O}
+\end{equation}
+This approach allows to extract the real type abundances without the need of
+an iterative procedure as in the Bayesian approach because the prior
+probability are no longer included in the formulation.
+
+However, this is not the full story. Even if eq.~\ref{Sec1:QSeqInv} is
+obtained after having summed on all the events in our sample, it is possible
+to define the same relation on a single event. This operation leads to some
+analogies with the Quantum Mechanics formalism.
+
+Let consider a status $\psi_{i}(S)$ which is the $i$ component of the vector
+defined as:
+\begin{equation}
+\label{Sec1:psi}
+\vec{\Psi}(S) = \boldmath{A^{-1}} 
+\left(
+\begin{array}{c}
+p_{1}(S)\\
+\ldots \\
+p_{N_{types}}(S)
+\end{array}
+\right)
+\end{equation}
+The first property we can find, by contruction, is:
+\begin{equation}
+\label{Sec1:psiProp1}
+\int \psi_{i}(S) p_{k}(S) dS = \delta_{ik},
+\end{equation}
+which immediately leads to the relation by replacing eq.~\ref{Sec1:psiProp1} in eq.~\ref{Sec1:BasicRelation}:
+\begin{equation}
+\label{Sec1:psi}
+\sum\limits_{j=1}^{M}\psi_{i}(S) = M_{i}
+\end{equation}
+Therefore, the inversion of the $\boldmath{A}$ matrix can be performed at the
+level of a single event to define an amplitude for each event class (then a
+vector of amplitudes) and the sum of all the events can be performed using
+each amplitude as a weight.
+
+If we compare $P_{i}(S)$, from the Bayesian approach, with $\psi_{i}(S)$ in
+this novel approach, we can identify some important differences:
+\begin{itemize}
+\item $0 < P_{i}(S) < 1$ while $\psi_{i}(S)$ has no limitation (it can be also
+  negative),\\
+\item $\psi_{i}(S)$ doesn't depend on prior probabilities (particle
+  abundances) but only in the detector responses,\\
+\item On average the contribution to
+  $\psi_{i}$ of the events belonging to a class $k$ is zero if $i \neq k$, and
+  1 if (i = k) (orthogonality)
+\end{itemize}
+
+
+
