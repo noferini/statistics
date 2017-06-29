@@ -1,0 +1,49 @@
+\section{Connection between statistics and event-by-event appraoch}
+\subsection{The foundamental relation}
+If we consider the case with a sample of data composed by $N_{type}$ classes distinuguished via the measurement of signal $S$ measured by a specific detector.
+Assuming to know exactly what is the detector response for each event class expressed by $p_{i}(S)$ with i=1,2,...,$N_{type}$ and $\int p_{i}(S) dS = 1$.
+
+A priori we don't know what the abundances, $M_{i}$, for the event classes are which is usually what we want to measure, we just know what is the total event multiplicity $M = \sum\limits_{i}^{N_{type}} M_{i}$ 
+Keeping them as a variable we can define the following relation for a generic function $f(S)$ of the signal:
+
+\begin{equation}
+\label{Sec1:BasicRelation}
+\sum\limits_{j}^{M} f(S) = \sum\limits_{i}^{N_{type}} M_{i} \int p_{i}(S) f(S) dS,
+\end{equation}
+such a relation is valid because on average the signal distribution for a given class has to be distributed accordingly to the know detector response.
+
+It is worth to note that the relation in eq.~\ref{Sec1:BasicRelation} is valid for any function $f(S)$ depending on the signal and it is interesting to see what happens when we replacing it with some specific functions.
+
+First of all we are going to introduce a probability defined using the Bayes theorem. Such a probability, which depends on the measured signal, was particulary used in the ALICE experiment (reference) to identify particles (in that case event classes are represented by different particles type) and therefore it was reported as a good candidate to define the probability we are looking for.
+
+Using the Bayes theorem where $p_{i}$ represent the conditional probability (the probability that an event of a class, $H_{i}$, relases the measured signal) $P(S|H_{i})$ it is possible to derive the posterior probability (the probability that the measured signal belongs to an event of the class $H_{i}$) $P(H_{i}|S)$ via the formula (for simplicity we will refer to it simply with $P_{i}(S)$):
+\begin{equation}
+\label{Sec1:BayesianProb}
+P_{i}(S) = P(H_{i}|S) = \frac{C_{i} P(S|H_{i})}{\sum\limits_{i}^{N_{type}}C_{i} P(S|H_{i})} = \frac{C_{i} p_{i}(S)}{\sum\limits_{i}^{N_{type}}C_{i} p_{i}(S)},
+\end{equation}
+where $C_{i}$ is usually called the prior probability which is the best guess of the abundances for all the event classes, expected to be as closer as possible to the the real one $M_{i}$. The main property of the Bayesian probability is that by definition $\sum\limits_{i}^{N_{type}} P_{i}(S) = 1$.
+
+The use of Bayesian probability is applied by replacing in eq.~\ref{Sec1:BasicRelation} $f(S)$ with $P_{i}(S)$, i.e. by counting all the events with the probability as a weight. The way the Bayesian probability is defined guarantees very important properties:
+\begin{eqnarray}
+\label{Sec1:BayesianProp}
+\sum\limits_{j=1}^{M}P_{i}(S) = M_{i},{\rm\ if\ {\it C_{i} = M_{i}}}, \\
+\label{Sec1:BayesianProp2}
+C_{i} \rightarrow M_{i} {\rm\ via\ iterative\ procedure}.
+\end{eqnarray}
+While the property in eq.~\ref{Sec1:BayesianProp} can be easily demonstrated by replacing in eq.~\ref{Sec1:BayesianProb}  $C_{i}$ with $M_{i}$, the latter one requires more extended computation.
+In particular for $C_{i} \neq M_{i}$ eq.~\ref{Sec1:BayesianProp} can be rewritten (after some calculations) in the form:
+\begin{eqnarray}
+\label{Sec1:BayesFullCalc}
+\sum\limits_{j=1}^{M}P_{i}(S) = M_{i} \int \frac{1}{1+\frac{\sum\limits_{k \neq i} \left( \frac{C_k}{C_i} - \frac{M_k}{M_i} \right) p_{k}(S)}{1 + \sum\limits_{k \neq i} \frac{M_k}{M_i} p_k(S)}} p_{i}(S)dS \sim \\
+\sim M_{i} \int  \left( 1+\frac{\sum\limits_{k \neq i} \left( \frac{M_k}{M_i} - \frac{C_k}{C_i} \right) p_{k}(S)}{1 + \sum\limits_{k \neq i} \frac{M_k}{M_i} p_k(S)} \right) p_{i}(S)dS = \\
+= M_{i}  \left( 1 + \sum\limits_{k \neq i}  \left( \frac{M_k}{M_i} - \frac{C_k}{C_i} \right) \int  \frac{p_{k}(S)p_{i}(S)dS}{1+\sum\limits_{l \neq i} \frac{M_l}{M_i} p_l(S)} \right).
+\end{eqnarray}
+Providing that $\frac{C_k}{C_i} - \frac{M_k}{M_i}$ becomes smaller and smaller via iterative procedure and that $\int p_{k}(S)p_{i}(S)dS \ll 1$ for $k \neq i$ (good separation), then $C_i \rightarrow M_i$
+
+For the case reported by ALICE (reference) it was shown that in less than 10 iterations the convergence $C_{i} \rightarrow M_{i}$ was observed.
+The fact that an iterative procedure is needed depends on the presence in the Bayesian probability expression of a term, the prior probability, which has to be extracted from the data sample. The speed of the converegence depends on the separation of the event classes with respect the signal $S$ and it starts to be quite slow when it is worse than $1\sigma$ in Gaussian approximation.
+Moreover, it should be noted that we are assuming that the detector response and the prior probability are constant in the whole data sample.
+For the case they depend on other variables (like $p_{T}$ in the case of the ALICE example) the sample has to be divided in subsample in order to guarantee that within each subsample the parameter assumed are constant. Because of the finite statistics of the data sample such an operation is not always possible leading to possible systematic effects.
+
+For the reasons exposed in the previous paragraph we looked for a different definition of the probability to be independent of the assumption on the prior probabilities. In this search we discovered that replacing the Bayesian probability $P_{i}(S)$ with the detector response probability $p_{i}(S)$ even if we loosed the properties guaranteed by the Bayes theorem we gained much more.
+

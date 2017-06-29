@@ -1,0 +1,111 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                      %
+% Athanassios Protopapas, October 2005 %
+% Mini-example for using apa.cls       %
+%                                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{cimento}
+\usepackage{graphicx}  % got figures? uncomment this
+%\bibliographystyle{apacite}
+\usepackage{lineno}  % got figures? uncomment this
+\linenumbers
+\title{Statistical classification using different approaches based on the Bayes Theorem and the Quantum Mechanics formalism}
+
+\author{F.~Noferini\from{ins:centrofermi}\from{ins:infn}}
+\instlist{
+  \inst{ins:centrofermi} Museo Storico della Fisica e Centro Studi e Ricerche ``Enrico Fermi'' - Rome, Italy
+  \inst{ins:infn} INFN, Sezione Bologna - Bologna, Italy
+  }
+  
+ %%The correct list of PACS numbers and definitions is available at www.aip.org/pacs/pacs2010/about.html
+\PACSes{\PACSit{--.--}{\dots}
+\PACSit{--.--}{\ldots}}
+
+%\acknowledgements{Written at the request of the Prac\TeX\ journal editors. Comments may be sent to the author at protopap@ilsp.gr.}
+
+%\shorttitle{APA style manuscript}
+%\rightheader{APA style manuscript}
+%\leftheader{A.\ Protopapas}
+
+%\newcommand{\jpsi}{\ensuremath{\rm J/\Psi}}
+
+\begin{document}
+
+\maketitle                            
+\begin{abstract}
+In this work a novel statistical approach is presented.
+The aim of such an appraoch is to classify events associating a probability to belong to different classes in a way
+which allows to classify simultaneoulsy events both in a statistical way and on event-by-event basis.
+In particular two different startegies were derived in a similar framework: one using the Bayes' theorem properties
+and one using the Quantium Mechanics formalism which treats, at statistical level, the usual finite detector resolution as a quantum
+wave function effect.
+\end{abstract}
+
+%\tableofcontents{}
+
+\input{introduction}
+The classification operation is a very general concept which may assume different meaning depending on the context in which
+it is applied.
+Here we are referring to the capability to discriminate different event classes on the basis of some
+measured variables.
+Because of a usual finite resolution in a single measurement different classes may be not completelly separable
+in the sense that for a single event it is not possible to define with absolute certainty if it belongs to a class
+or to another one.
+In the case we are interested to perform measurement by selecting a specific event class there are usual two kinds of
+approaches which can be exploited: a statistical approach which allows to unfold the finite resolution/spread of our
+measurements to extract the number of event belonging to that class (for instance by fitting the distributions in the
+variables we are able to measured); or defining some cut on the variables which minimize the contamination of other classes.
+In the first case we are able to extract the total number of events without, in principle, any efficiency loss and
+contamination but we are not able to classify on event-by-event basis.
+In the latter one we can associate each event to a class (useful to characterize the properties of the class in terms of
+other variables/osservables) but we have to deal with corrections for efficiency loss and contamination.
+The idea to associate a probability to each event is to extend the properties of the statistical approach, no
+efficiency loss and no contamination by other classes, to the event-by-event approach by replacing the concept
+of cut with the use of a  weight.
+Therefore, in the first section we will present a general formalism to define probabilities under different assumptions
+and to derive the properties of each scheme.
+In the second section we will focus on two particular cases, Bayesian probabilities and Quantum probabilities,
+extending the study to the multi-variable and multiple-classification scenarios.
+In the third section some example will be reported to show the power and the limitations of the methods.
+Finally, we will discuss our results reporting our conclusions and final remarks.
+
+\input{generalscheme}
+
+\input{approaches}
+
+\input{validation}
+
+\input{discussion}
+
+\input{conclusions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%     figure 5c  %%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{figure}[!h]
+%\begin{center}
+%    \includegraphics[width=0.9\linewidth]{eps/plot_5.0_5.5.eps}
+%\end{center}
+%    \caption{$(N\sigma_{TPC},N\sigma_{TOF})$  distribution for all the species in 0-5\% PbPb collisions for $5.0 < p_{T} < 5.5~\rm{ GeV/}c$. The distributions were fitted assuming a Gaussian distribution plus exponential tail.}
+%    \label{Fig:Nsigma2D3}
+%\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{thebibliography}{0}
+%\bibitem{Adam:2015yta}  \BY{ALICE Collaboration (Adam, J. \etal)} \IN{Phys. Lett.}{B754}{2016}{360};
+
+%\bibitem{} \BY{} \IN{}{}{}{};
+%\bibitem{} \BY{} \IN{}{}{}{};
+%\bibitem{} \BY{} \IN{}{}{}{};
+%\bibitem{} \BY{} \IN{}{}{}{};
+%\bibitem{} \BY{} \IN{}{}{}{};
+
+
+%\bibitem{ref:apo} \BY{Einstein A. \atque Fermi E.}
+%  \IN{Phys. Rev. A}{13}{1999}{12};
+%  \SAME{69}{999}{1666}.
+%\bibitem{ref:pul} \BY{Newton I.}
+%  preprint INFN 8181.
+%\bibitem{ref:bra} \BY{Bragg~B.}
+%  \TITLE{Complete Works}, in \TITLE{Workers Playtime}, edited by \NAME{Tizio A. \atque Caio B.} (Unexeditor, Bologna) 1997, pp.~1-10.
+\end{thebibliography}
+\end{document}
