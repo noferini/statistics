@@ -56,7 +56,7 @@ or to another one.
 In the case we are interested to perform measurement by selecting a specific event class there are usual two kinds of
 approaches which can be exploited: a statistical approach which allows to unfold the finite resolution/spread of our
 measurements to extract the number of event belonging to that class (for instance by fitting the distributions in the
-variables we are able to measured); or defining some cut on the variables which minimize the contamination of other classes.
+variables we are able to measured); or defining some cuts on the variables which minimize the contamination of other classes.
 In the first case we are able to extract the total number of events without, in principle, any efficiency loss and
 contamination but we are not able to classify on event-by-event basis.
 In the latter one we can associate each event to a class (useful to characterize the properties of the class in terms of
@@ -64,8 +64,11 @@ other variables/osservables) but we have to deal with corrections for efficiency
 The idea to associate a probability to each event is to extend the properties of the statistical approach, no
 efficiency loss and no contamination by other classes, to the event-by-event approach by replacing the concept
 of cut with the use of a  weight.
-Therefore, in the first section we will present a general formalism to define probabilities under different assumptions
-and to derive the properties of each scheme.
+In this approach the probability used as a weight should guarantee that the effect of the contaminations by other
+event classes goes to zero whena averaging on all the events.
+
+In the first section we will present a general formalism to define probabilities under different assumptions
+and to derive the properties in each scheme we presented.
 In the second section we will focus on the two particular cases introduced before, Bayesian probabilities and Quantum probabilities,
 extending the study to the multi-variable and multiple-classification scenarios.
 In the third section some example will be reported to show the power and the limitations of the methods.
