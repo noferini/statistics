@@ -1,19 +1,27 @@
 \section{Connection between statistics and event-by-event appraoch}
 \subsection{The foundamental relation}
-If we consider the case with a sample of data composed by $N_{type}$ classes distinuguished via the measurement of signal $S$ measured by a specific detector.
+We want to consider the case with a sample of data composed by $N_{type}$ classes distinuguished via the measurement of signal $S$ measured by a specific detector.
 Assuming to know exactly what is the detector response for each event class expressed by $p_{i}(S)$ with i=1,2,...,$N_{type}$ and $\int p_{i}(S) dS = 1$.
 
-A priori we don't know what the abundances, $M_{i}$, for the event classes are which is usually what we want to measure, we just know what is the total event multiplicity $M = \sum\limits_{i}^{N_{type}} M_{i}$ 
+A priori we don't know what the abundances, $M_{i}$, are for the different
+event classes. We just know the total event multiplicity $M =
+\sum\limits_{i}^{N_{type}} M_{i}$, while $M_i$ is what we usually want to measure.
 Keeping them as a variable we can define the following relation for a generic function $f(S)$ of the signal:
 
 \begin{equation}
 \label{Sec1:BasicRelation}
-\sum\limits_{j}^{M} f(S) = \sum\limits_{i}^{N_{type}} M_{i} \int p_{i}(S) f(S) dS,
+\sum\limits_{j}^{M} f(S_j) = \sum\limits_{i}^{N_{type}} M_{i} \int p_{i}(S) f(S) dS,
 \end{equation}
-such a relation is valid because on average the signal distribution for a given class has to be distributed accordingly to the know detector response.
+such a relation is valid because on average the signal distribution for a
+given class has to be distributed accordingly to the know detector response
+for each event class separatelly. Here  $S_j$ refers to the signal
+measured in the $j$-th event.
 
-It is worth to note that the relation in eq.~\ref{Sec1:BasicRelation} is valid for any function $f(S)$ depending on the signal and it is interesting to see what happens when we replacing it with some specific functions.
+It is worth to note that the relation in eq.~\ref{Sec1:BasicRelation} is valid
+for any function $f(S)$ depending on the signal and
+it is interesting to see what happens when we replace it with some specific functions.
 
+\subsection{Probability from the Bayes theorem}
 First of all we are going to introduce a probability defined using the Bayes theorem. Such a probability, which depends on the measured signal, was particulary used in the ALICE experiment (reference) to identify particles (in that case event classes are represented by different particles type) and therefore it was reported as a good candidate to define the probability we are looking for.
 
 Using the Bayes theorem where $p_{i}$ represent the conditional probability (the probability that an event of a class, $H_{i}$, relases the measured signal) $P(S|H_{i})$ it is possible to derive the posterior probability (the probability that the measured signal belongs to an event of the class $H_{i}$) $P(H_{i}|S)$ via the formula (for simplicity we will refer to it simply with $P_{i}(S)$):
@@ -26,7 +34,7 @@ where $C_{i}$ is usually called the prior probability which is the best guess of
 The use of Bayesian probability is applied by replacing in eq.~\ref{Sec1:BasicRelation} $f(S)$ with $P_{i}(S)$, i.e. by counting all the events with the probability as a weight. The way the Bayesian probability is defined guarantees very important properties:
 \begin{eqnarray}
 \label{Sec1:BayesianProp}
-\sum\limits_{j=1}^{M}P_{i}(S) = M_{i},{\rm\ if\ {\it C_{i} = M_{i}}}, \\
+\sum\limits_{j=1}^{M}P_{i}(S_j) = M_{i},{\rm\ if\ {\it C_{i} = M_{i}}}, \\
 \label{Sec1:BayesianProp2}
 C_{i} \rightarrow M_{i} {\rm\ via\ iterative\ procedure}.
 \end{eqnarray}
@@ -34,16 +42,172 @@ While the property in eq.~\ref{Sec1:BayesianProp} can be easily demonstrated by 
 In particular for $C_{i} \neq M_{i}$ eq.~\ref{Sec1:BayesianProp} can be rewritten (after some calculations) in the form:
 \begin{eqnarray}
 \label{Sec1:BayesFullCalc}
-\sum\limits_{j=1}^{M}P_{i}(S) = M_{i} \int \frac{1}{1+\frac{\sum\limits_{k \neq i} \left( \frac{C_k}{C_i} - \frac{M_k}{M_i} \right) p_{k}(S)}{1 + \sum\limits_{k \neq i} \frac{M_k}{M_i} p_k(S)}} p_{i}(S)dS \sim \\
+\sum\limits_{j=1}^{M}P_{i}(S_j) = M_{i} \int \frac{1}{1+\frac{\sum\limits_{k \neq i} \left( \frac{C_k}{C_i} - \frac{M_k}{M_i} \right) p_{k}(S)}{1 + \sum\limits_{k \neq i} \frac{M_k}{M_i} p_k(S)}} p_{i}(S)dS \sim \\
 \sim M_{i} \int  \left( 1+\frac{\sum\limits_{k \neq i} \left( \frac{M_k}{M_i} - \frac{C_k}{C_i} \right) p_{k}(S)}{1 + \sum\limits_{k \neq i} \frac{M_k}{M_i} p_k(S)} \right) p_{i}(S)dS = \\
 = M_{i}  \left( 1 + \sum\limits_{k \neq i}  \left( \frac{M_k}{M_i} - \frac{C_k}{C_i} \right) \int  \frac{p_{k}(S)p_{i}(S)dS}{1+\sum\limits_{l \neq i} \frac{M_l}{M_i} p_l(S)} \right).
 \end{eqnarray}
 Providing that $\frac{C_k}{C_i} - \frac{M_k}{M_i}$ becomes smaller and smaller via iterative procedure and that $\int p_{k}(S)p_{i}(S)dS \ll 1$ for $k \neq i$ (good separation), then $C_i \rightarrow M_i$
 
 For the case reported by ALICE (reference) it was shown that in less than 10 iterations the convergence $C_{i} \rightarrow M_{i}$ was observed.
-The fact that an iterative procedure is needed depends on the presence in the Bayesian probability expression of a term, the prior probability, which has to be extracted from the data sample. The speed of the converegence depends on the separation of the event classes with respect the signal $S$ and it starts to be quite slow when it is worse than $1\sigma$ in Gaussian approximation.
-Moreover, it should be noted that we are assuming that the detector response and the prior probability are constant in the whole data sample.
+The fact that an iterative procedure is needed depends on the presence in the
+Bayesian probability expression of a term, the prior probability, which has to
+be extracted from the data sample. The speed of the converegence depends on
+the separation of the event classes with respect the signal $S$ and it starts
+to be quite slow when it is worse than $1\sigma$ (if assuming Gaussian distributions).
+Moreover, it should be noted that we are assuming that the detector responses and the prior probabilities are constant in the whole data sample.
 For the case they depend on other variables (like $p_{T}$ in the case of the ALICE example) the sample has to be divided in subsample in order to guarantee that within each subsample the parameter assumed are constant. Because of the finite statistics of the data sample such an operation is not always possible leading to possible systematic effects.
 
-For the reasons exposed in the previous paragraph we looked for a different definition of the probability to be independent of the assumption on the prior probabilities. In this search we discovered that replacing the Bayesian probability $P_{i}(S)$ with the detector response probability $p_{i}(S)$ even if we loosed the properties guaranteed by the Bayes theorem we gained much more.
+\subsection{Probability and Quantum Mechanics formalism}
+For the reasons exposed in the previous paragraph we looked for a different
+definition of the probability to be independent of the assumption on the prior
+probabilities. In this search we discovered that replacing the Bayesian
+probability $P_{i}(S)$ with the detector response probability $p_{i}(S)$ 
+we gain many useful properties.
 
+Replacing in eq.~\ref{Sec1:BasicRelation} $f(S) \rightarrow p_{k}(S)$ the
+following experession is obtained:
+\begin{equation}
+\label{Sec1:QSmain}
+\sum\limits_{j}^{M}p_{k}(S_j) = \sum\limits_{i=1}^{N_{type}}M_{i}\int p_{k}(S)
+p_{i}(S) dS = \sum\limits_{i=1}^{N_{type}}M_{i} a_{ki}, 
+\end{equation}
+where $a_{ki}=a_{ik}$ are quantities depending only on the detector responses
+for the different types of signals and they can be computed {\it a priori} if responses are well known.
+For instance in the case of Gaussian responses with constant resolution
+$\sigma$ and different mean values ($p_{i}(S) =
+exp(-(S-\bar{S}_{i})^{2}/2\sigma^{2})/\sqrt{2\pi\sigma^{2}}$) $a_{ki}$ can
+be calulated analitically:
+\begin{equation}
+\label{Sec1:GaussianMatrixElements}
+a_{ki} = a_{ik} = \frac{exp(-\Delta_{ik}^{2}/4)}{\sqrt{8\pi\sigma^2}},
+\end{equation}
+where $\Delta_{ik}=(\bar{S}_{i} - \bar{S}_{k})/\sigma$ represents the
+separation, in number of $\sigma$s, between two different classes of events.
+In the trivial case where the $\Delta_{ik}$ values are very large (for $i \neq
+k$) $a_{ki} \rightarrow \delta_{ik} / \sqrt{8\pi\sigma^2}$.
+In the case the detector responses are Gaussian but with different
+widths the previous results are still valid by replacing $\sigma$ with
+$\sigma_{ik}$,  being $\sigma_{ik}^2 = \frac{\sigma_{i}^2 + \sigma_{j}^2}{2}$.
+
+Therefore, if the $a_{ik}$ are known eq.~\ref{Sec1:QSmain} leads to the
+relation:
+\begin{equation}
+\label{Sec1:QSformula}
+\vec{O} =
+ \left(
+\begin{array}{c}
+o_1 = \sum\limits^{M} p_{1}\\
+\ldots \\
+o_{N_{type}}=\sum\limits^{M} p_{N_{type}}
+\end{array}
+\right) =
+\left(
+\begin{array}{ccc}
+a_{1,1} & \ldots & a_{1,N_{type}} \\
+\ldots & \ldots & \ldots \\
+a_{N_{types},1} & \ldots & a_{N_{type},N_{type}}
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+M_{1}\\
+\ldots \\
+M_{N_{types}}
+\end{array}
+\right) =
+\boldmath{A} \vec{M},
+\end{equation}
+where $\vec{O}$ represents the vector of observables which can be constructed from the data
+sample, $\vec{M}$ the vector with the abundaces of the classes we want to
+extract and $\boldmath{A}$ the matrix with $a_{ik}$ elements.
+
+If $\boldmath{A}$ is known and can be inverted (all classes are
+well separated as distributions in the variable $S$) the previous relation can
+be used to extract $\vec{M}$ from $\vec{O}$:
+\begin{equation}
+\label{Sec1:QSeqInv}
+\vec{M} = \boldmath{A^{-1}} \vec{O}
+\end{equation}
+This approach allows to extract the real abundances without the need of
+an iterative procedure as in the Bayesian approach because the prior
+probability are no longer included in the formulation.
+
+This is not the full story. Even if eq.~\ref{Sec1:QSeqInv} is
+obtained after having summed on all the events in our sample, it is possible
+to define the same relation on a single event. This operation leads to some
+analogies with the Quantum Mechanics formalism.
+
+Let consider a status $\psi_{i}(S)$ which is the $i$ component of the vector
+defined as:
+\begin{equation}
+\label{Sec1:psi}
+\vec{\Psi}(S) = \boldmath{A^{-1}} 
+\left(
+\begin{array}{c}
+p_{1}(S)\\
+\ldots \\
+p_{N_{types}}(S)
+\end{array}
+\right)
+\end{equation}
+The first property we can find, by contruction, is:
+\begin{equation}
+\label{Sec1:psiProp1}
+\int \psi_{i}(S) p_{k}(S) dS = \delta_{ik},
+\end{equation}
+which immediately leads to the relation (by replacing eq.~\ref{Sec1:psiProp1} in eq.~\ref{Sec1:BasicRelation}):
+\begin{equation}
+\label{Sec1:psi}
+\sum\limits_{j=1}^{M}\psi_{i}(S_j) = M_{i}
+\end{equation}
+Therefore, the inversion of the $\boldmath{A}$ matrix can be performed at the
+level of a single event to define an amplitude for each event class (then a
+vector of amplitudes) and the sum of all the events can be performed using
+each amplitude as a weight.
+
+If we compare $P_{i}(S)$, from the Bayesian approach, with $\psi_{i}(S)$ in
+this novel approach, we can identify some important differences:
+\begin{itemize}
+\item $0 < P_{i}(S) < 1$ while $\psi_{i}(S)$ has no limitation (it can be also
+  negative),\\
+\item $\psi_{i}(S)$ doesn't depend on prior probabilities (particle
+  abundances) but only on the detector responses,\\
+\item On average the contribution to
+  $\psi_{i}$ of the events belonging to a class $k$ is zero if $i \neq k$, and
+  1 if (i = k) (orthogonality)
+\end{itemize}
+
+The use of Quantum Mechanics formalism may be pushed over.
+We can define:
+\begin{eqnarray}
+\label{Sec1:QMdef1}
+p_{i}(S) = \bra{i} \\
+\psi_{i}(S) = \ket{i}
+\end{eqnarray}
+where the transformation from $\bra{bra}$ to $\ket{ket}$ is provided by eq.~\ref{Sec1:psi}.
+Basically, we are introducing a mixing matrix ($\boldmath{A^{-1}}$) mapping $\bra{bra}$
+to $\ket{ket}$ in order to obtain ``states'' which are orthogonal:
+\begin{equation}
+\label{Sec1:Orto}
+\braket{i|k} = \int p_{i}(S) \psi_{k}(S) dS = \delta_{ik}
+\end{equation}
+
+We can also represent our data sample in terms of our signal ($S$)
+distribution as:
+\begin{equation}
+\label{Sec1:DataSample}
+D(S) = \sum\limits_{k=1}^{N_{type}} M_{k} p_{k}(S) = 
+\sum\limits_{k=1}^{N_{type}}M_{k}\bra{k} = \bra{D},
+\end{equation}
+so that:
+\begin{eqnarray}
+\label{Sec1:Distribution}
+\sum\limits_{j=1}^{M} f(S_j) = \int D(S) f(S) dS \\
+\sum\limits_{j=1}^{M} \psi_{i}(S_j) = \int D(S) \psi_{i}(S) dS = \braket{D|i} = \sum\limits_{k=1}^{N_{type}}M_{k}\braket{k|i}=M_{i}
+\end{eqnarray}
+The sum over the data sample of the amplitude for a given class corresponds to
+the projection of the distribution on the ``state'' (event class) we are
+selecting. This means that the use of the amplitude as a weight when
+constructing any observable allow to put to zero (statistically) the contribution of all the
+events belonging to the wrong type and to preserve the contribution of the
+events of the right type as fully efficient.
