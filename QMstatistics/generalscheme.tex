@@ -26,7 +26,7 @@ where $C_{i}$ is usually called the prior probability which is the best guess of
 The use of Bayesian probability is applied by replacing in eq.~\ref{Sec1:BasicRelation} $f(S)$ with $P_{i}(S)$, i.e. by counting all the events with the probability as a weight. The way the Bayesian probability is defined guarantees very important properties:
 \begin{eqnarray}
 \label{Sec1:BayesianProp}
-\sum\limits_{j=1}^{M}P_{i}(S) = M_{i},{\rm\ if\ {\it C_{i} = M_{i}}}, \\
+\sum\limits_{j=1}^{M}P_{i}(S_j) = M_{i},{\rm\ if\ {\it C_{i} = M_{i}}}, \\
 \label{Sec1:BayesianProp2}
 C_{i} \rightarrow M_{i} {\rm\ via\ iterative\ procedure}.
 \end{eqnarray}
@@ -34,7 +34,7 @@ While the property in eq.~\ref{Sec1:BayesianProp} can be easily demonstrated by 
 In particular for $C_{i} \neq M_{i}$ eq.~\ref{Sec1:BayesianProp} can be rewritten (after some calculations) in the form:
 \begin{eqnarray}
 \label{Sec1:BayesFullCalc}
-\sum\limits_{j=1}^{M}P_{i}(S) = M_{i} \int \frac{1}{1+\frac{\sum\limits_{k \neq i} \left( \frac{C_k}{C_i} - \frac{M_k}{M_i} \right) p_{k}(S)}{1 + \sum\limits_{k \neq i} \frac{M_k}{M_i} p_k(S)}} p_{i}(S)dS \sim \\
+\sum\limits_{j=1}^{M}P_{i}(S_j) = M_{i} \int \frac{1}{1+\frac{\sum\limits_{k \neq i} \left( \frac{C_k}{C_i} - \frac{M_k}{M_i} \right) p_{k}(S)}{1 + \sum\limits_{k \neq i} \frac{M_k}{M_i} p_k(S)}} p_{i}(S)dS \sim \\
 \sim M_{i} \int  \left( 1+\frac{\sum\limits_{k \neq i} \left( \frac{M_k}{M_i} - \frac{C_k}{C_i} \right) p_{k}(S)}{1 + \sum\limits_{k \neq i} \frac{M_k}{M_i} p_k(S)} \right) p_{i}(S)dS = \\
 = M_{i}  \left( 1 + \sum\limits_{k \neq i}  \left( \frac{M_k}{M_i} - \frac{C_k}{C_i} \right) \int  \frac{p_{k}(S)p_{i}(S)dS}{1+\sum\limits_{l \neq i} \frac{M_l}{M_i} p_l(S)} \right).
 \end{eqnarray}
@@ -47,27 +47,27 @@ For the case they depend on other variables (like $p_{T}$ in the case of the ALI
 
 For the reasons exposed in the previous paragraph we looked for a different definition of the probability to be independent of the assumption on the prior probabilities. In this search we discovered that replacing the Bayesian probability $P_{i}(S)$ with the detector response probability $p_{i}(S)$ even if we loosed the properties guaranteed by the Bayes theorem we gained much more.
 
-Replacing in eq.~\ref{Sec1:BasicRelation} $f(S) \rightarrow p_{k}(s)$ the
+Replacing in eq.~\ref{Sec1:BasicRelation} $f(S) \rightarrow p_{k}(S)$ the
 following experession is obtained:
 \begin{equation}
 \label{Sec1:QSmain}
-\sum\limits_{j}^{M}p_{k}(S) = \sum\limits_{i=1}^{N_{type}}M_{i}\int p_{k}(S)
+\sum\limits_{j}^{M}p_{k}(S_j) = \sum\limits_{i=1}^{N_{type}}M_{i}\int p_{k}(S)
 p_{i}(S) dS = \sum\limits_{i=1}^{N_{type}}M_{i} a_{ki}, 
 \end{equation}
-where $a_{ki}=a_{ik}$ are quantities depending only on the detector responses
-for the different types of signals.
-They can be computed {\it a priori} if responses are well known.
+where $S_j$ refers to the signal
+measured in the $j$-th event.
+It is worth to note that $a_{ki}=a_{ik}$ are quantities depending only on the detector responses
+for the different types of signals and they can be computed {\it a priori} if responses are well known.
 For instance in the case of Gaussian responses with constant resolution
-$\sigma$ and different value for the means ($p_{i}(S) =
-exp(-(S-\bar{S}_{i})^{2}/2\sigma^{2})/\sqrt{2\pi\sigma^{2}}$) the values can
+$\sigma$ and different mean values ($p_{i}(S) =
+exp(-(S-\bar{S}_{i})^{2}/2\sigma^{2})/\sqrt{2\pi\sigma^{2}}$) $a_{ki}$ can
 be calulated analitically:
 \begin{equation}
 \label{Sec1:GaussianMatrixElements}
 a_{ki} = a_{ik} = \frac{exp(-\Delta_{ik}^{2}/4)}{\sqrt{8\pi\sigma^2}},
 \end{equation}
 where $\Delta_{ik}=(\bar{S}_{i} - \bar{S}_{k})/\sigma$ represents the
-separation, in number of $\sigma$
-with respect to the measured signal, between two different classes of events.
+separation, in number of $\sigma$s, between two different classes of events.
 In the trivial case where the $\Delta_{ik}$ values are very large (for $i \neq
 k$) $a_{ki} \rightarrow \delta_{ik} / \sqrt{8\pi\sigma^2}$.
 In the case the detector responses are Gaussian but with different
@@ -143,7 +143,7 @@ The first property we can find, by contruction, is:
 which immediately leads to the relation by replacing eq.~\ref{Sec1:psiProp1} in eq.~\ref{Sec1:BasicRelation}:
 \begin{equation}
 \label{Sec1:psi}
-\sum\limits_{j=1}^{M}\psi_{i}(S) = M_{i}
+\sum\limits_{j=1}^{M}\psi_{i}(S_j) = M_{i}
 \end{equation}
 Therefore, the inversion of the $\boldmath{A}$ matrix can be performed at the
 level of a single event to define an amplitude for each event class (then a
@@ -169,8 +169,9 @@ We can define:
 p_{i}(S) = \bra{i} \\
 \psi_{i}(S) = \ket{i}
 \end{eqnarray}
-where the transformation for bra to ket is provided by eq.~\ref{Sec1:psi}.
-Then we obtain ``states'' which are by definition orthogonal:
+where the transformation for $\bra{bra}$ to $\ket{ket}$ is provided by eq.~\ref{Sec1:psi}.
+Basically, we are introducing a mixing matrix ($\boldmath{A^{-1}}$) mapping $\bra{bra}$
+to $\ket{ket}$ in order to obtain ``states'' which are orthogonal:
 \begin{equation}
 \label{Sec1:Orto}
 \braket{i|k} = \int p_{i}(S) \psi_{k}(S) dS = \delta_{ik}
@@ -186,8 +187,8 @@ D(S) = \sum\limits_{k=1}^{N_{type}} M_{k} p_{k}(S) =
 so that:
 \begin{eqnarray}
 \label{Sec1:Distribution}
-\sum\limits^{M} f(S) = \int D(S) f(S) dS \\
-\sum\limits^{M} \psi_{i}(S) = \int D(S) \psi_{i}(S) dS = \braket{D|i} = \sum\limits_{k=1}^{N_{type}}M_{k}\braket{k|i}=M_{i}
+\sum\limits_{j=1}^{M} f(S_j) = \int D(S) f(S) dS \\
+\sum\limits_{j=1}^{M} \psi_{i}(S_j) = \int D(S) \psi_{i}(S) dS = \braket{D|i} = \sum\limits_{k=1}^{N_{type}}M_{k}\braket{k|i}=M_{i}
 \end{eqnarray}
 The sum over the data sample of the amplitude for a given class corresponds to
 the projection of the distribution on the ``states'' (event class) we are
