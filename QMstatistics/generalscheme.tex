@@ -162,5 +162,36 @@ this novel approach, we can identify some important differences:
   1 if (i = k) (orthogonality)
 \end{itemize}
 
+The use of Quantum Mechanics formalism may be pushed over.
+We can define:
+\begin{eqnarray}
+\label{Sec1:QMdef1}
+p_{i}(S) = \bra{i} \\
+\psi_{i}(S) = \ket{i}
+\end{eqnarray}
+where the transformation for bra to ket is provided by eq.~\ref{Sec1:psi}.
+Then we obtain ``states'' which are by definition orthogonal:
+\begin{equation}
+\label{Sec1:Orto}
+\braket{i|k} = \int p_{i}(S) \psi_{k}(S) dS = \delta_{ik}
+\end{equation}
 
-
+We can also represent our data sample in terms of our signal ($S$)
+distribution as:
+\begin{equation}
+\label{Sec1:DataSample}
+D(S) = \sum\limits_{k=1}^{N_{type}} M_{k} p_{k}(S) = 
+\sum\limits_{k=1}^{N_{type}}M_{k}\bra{k} = \bra{D},
+\end{equation}
+so that:
+\begin{eqnarray}
+\label{Sec1:Distribution}
+\sum\limits^{M} f(S) = \int D(S) f(S) dS \\
+\sum\limits^{M} \psi_{i}(S) = \int D(S) \psi_{i}(S) dS = \braket{D|i} = \sum\limits_{k=1}^{N_{type}}M_{k}\braket{k|i}=M_{i}
+\end{eqnarray}
+The sum over the data sample of the amplitude for a given class corresponds to
+the projection of the distribution on the ``states'' (event class) we are
+selecting. This means that the use of the amplitude as a weight when
+constructing any observable allow to put to zero (statistically) the contribution of all the
+events belonging to the wrong type and to preserve the contribution of the
+events of the right type as fully efficient.
