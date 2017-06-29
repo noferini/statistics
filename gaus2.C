@@ -8,9 +8,10 @@
 #include "TH1F.h"
 #include "TProfile.h"
 #include "TLegend.h"
+#include "TPaveText.h"
 
 int main(){
-  Gaus prova;
+  Function prova;
   const Int_t nfunc = 2;
   prova.SetNtype(nfunc);
   
@@ -168,6 +169,63 @@ int main(){
 
   }
 
+  TF1 *fProd[2][2];
+
+  fProd[0][0] = prova.GetSPfunction(0); 
+  fProd[0][1] = prova.GetSPfunction(1); 
+  fProd[1][0] = prova.GetSPfunction(2); 
+  fProd[1][1] = prova.GetSPfunction(3); 
+
+
+  fProd[0][0]->SetRange(-6,6);
+  fProd[0][1]->SetRange(-6,6);
+  fProd[1][0]->SetRange(-6,6);
+  fProd[1][1]->SetRange(-6,6);
+
+  TCanvas *c2 = new TCanvas();
+  c2->Divide(2,2);
+  c2->cd(1);
+  fProd[0][0]->Draw();
+  TPaveText t1(0.5,0.4,5.5,0.6);
+  t1.SetBorderSize(0);
+  t1.AddText("p_{1} #psi_{1} #rightarrow #int_{} p_{2} #psi_{1} = 1");
+  t1.SetFillStyle(0);
+  t1.Draw("SAME");
+  fProd[0][0]->SetMaximum(0.65);
+  fProd[0][0]->SetMinimum(-0.2);
+  c2->cd(2);
+  fProd[0][1]->Draw();
+  TPaveText t2(0.5,0.4,5.5,0.6);
+  t2.SetBorderSize(0);
+  t2.AddText("p_{2} #psi_{1} #rightarrow #int_{} p_{2} #psi_{1} = 0");
+  t2.SetFillStyle(0);
+  t2.Draw("SAME");
+  fProd[0][1]->SetMaximum(0.65);
+  fProd[0][1]->SetMinimum(-0.2);
+  c2->cd(3);
+  fProd[1][0]->Draw();
+  TPaveText t3(-5.5,0.4,-0.5,0.6);
+  t3.SetBorderSize(0);
+  t3.AddText("p_{1} #psi_{2} #rightarrow #int_{} p_{1} #psi_{2} = 0");
+  t3.SetFillStyle(0);
+  t3.Draw("SAME");
+  fProd[1][0]->SetMaximum(0.65);
+  fProd[1][0]->SetMinimum(-0.2);
+  c2->cd(4);
+  fProd[1][1]->Draw();
+  TPaveText t4(-5.5,0.4,-0.5,0.6);
+  t4.SetBorderSize(0);
+  t4.AddText("p_{2} #psi_{2} #rightarrow #int_{} p_{2} #psi_{2} = 1");
+  t4.SetFillStyle(0);
+  t4.Draw("SAME");
+  fProd[1][1]->SetMaximum(0.65);
+  fProd[1][1]->SetMinimum(-0.2);
+
+  fProd[0][0]->SetTitle(";S;df/dS");
+  fProd[0][1]->SetTitle(";S;df/dS");
+  fProd[1][0]->SetTitle(";S;df/dS");
+  fProd[1][1]->SetTitle(";S;df/dS");
+
   TFile *fout = new TFile("gaus2.root","RECREATE");
   hsig->Write();
   hampl[0]->Write();
@@ -177,10 +235,15 @@ int main(){
   hsim1->Write();
   hsim2->Write();
   c->Write();
+  c2->Write();
   f1->Write();
   f2->Write();
   ff1->Write();
   ff2->Write();
+  fProd[0][0]->Write();
+  fProd[0][1]->Write();
+  fProd[1][0]->Write();
+  fProd[1][1]->Write();
 
   fout->Close();
 
