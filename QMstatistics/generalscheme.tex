@@ -21,6 +21,7 @@ It is worth to note that the relation in eq.~\ref{Sec1:BasicRelation} is valid
 for any function $f(S)$ depending on the signal and
 it is interesting to see what happens when we replace it with some specific functions.
 
+\subsection{Probability from the Bayes theorem}
 First of all we are going to introduce a probability defined using the Bayes theorem. Such a probability, which depends on the measured signal, was particulary used in the ALICE experiment (reference) to identify particles (in that case event classes are represented by different particles type) and therefore it was reported as a good candidate to define the probability we are looking for.
 
 Using the Bayes theorem where $p_{i}$ represent the conditional probability (the probability that an event of a class, $H_{i}$, relases the measured signal) $P(S|H_{i})$ it is possible to derive the posterior probability (the probability that the measured signal belongs to an event of the class $H_{i}$) $P(H_{i}|S)$ via the formula (for simplicity we will refer to it simply with $P_{i}(S)$):
@@ -56,6 +57,7 @@ to be quite slow when it is worse than $1\sigma$ (if assuming Gaussian distribut
 Moreover, it should be noted that we are assuming that the detector responses and the prior probabilities are constant in the whole data sample.
 For the case they depend on other variables (like $p_{T}$ in the case of the ALICE example) the sample has to be divided in subsample in order to guarantee that within each subsample the parameter assumed are constant. Because of the finite statistics of the data sample such an operation is not always possible leading to possible systematic effects.
 
+\subsection{Probability and Quantum Mechanics formalism}
 For the reasons exposed in the previous paragraph we looked for a different
 definition of the probability to be independent of the assumption on the prior
 probabilities. In this search we discovered that replacing the Bayesian
