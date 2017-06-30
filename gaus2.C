@@ -135,6 +135,9 @@ int main(){
   TH2F *hxyA[2];
   hxyA[0] = new TH2F("hxy1",";x;y",120,-0.1,1.1,120,-0.1,1.1);
   hxyA[1] = new TH2F("hxy2",";x;y",120,-0.1,1.1,120,-0.1,1.1);
+  TH2F *hxyS[2];
+  hxyS[0] = new TH2F("hxyS1",";x;y",120,-0.1,1.1,120,-0.1,1.1);
+  hxyS[1] = new TH2F("hxyS2",";x;y",120,-0.1,1.1,120,-0.1,1.1);
 
   TH1F *hpriors[2][20];
   TProfile *htrendPriors[2][20];
@@ -187,6 +190,7 @@ int main(){
 
     hxyA[0]->Fill(x,y,ampl[0]);
     hxyA[1]->Fill(x,y,ampl[1]);
+    hxyS[isp]->Fill(x,y);
 
     hampl[0]->Fill(signal,ampl[0]);
     hampl[1]->Fill(signal,ampl[1]);
@@ -476,6 +480,8 @@ int main(){
   hxy->Write();
   hxyA[0]->Write();
   hxyA[1]->Write();
+  hxyS[0]->Write();
+  hxyS[1]->Write();
   hpriors[0][19]->Write();
   hpriors[1][19]->Write();
   htrendPriors[0][19]->Write();
