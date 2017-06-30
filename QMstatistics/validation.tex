@@ -7,13 +7,26 @@ signal distributions with different mean values and same width.
 In Fig.~\ref{fig:Gaus2} the simulated detector responses and the amplitudes
 functions derived in such a case a reported. As it can be noted the amplitudes
 $\psi_{i}$ are constructed in order to garantee orthogonality with the $p_{k}$
-functions for $i \neq k$.
+functions for $i \neq k$. In the same figure the bayesian probabilities,
+$P_{i}(S)$, are reported as well for a choice of the prior probabilities of
+$C_{1}=0.7$ and $C_{2}=0.3$. It is worth to note that the asymmetric behavior
+visible in the Bayesian probabilities is due to the asymmetric values of the
+abundances. By construction the $P_{i}(S)$ distributions has to respect the
+condition:
+\begin{equation} 
+\label{Sec3:BayesCond}
+Cont. (1\rightarrow 2) = \int C_{1} p_{1}(S) P_{2}(S) ds = \int
+C_{2} p_{2}(S) P_{1}(S) ds = Cont. (2\rightarrow 1),
+\end{equation}
+to guarantee a symmetric flux of type-1 event contaminating type-2 class and 
+{\it vice versa}.
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.7\textwidth]{../png/figGaus2.png}
 \caption{Two Gaussian detector responses ($\Delta_{12} = 2$) and relative
-  $\psi(S)$ amplitudes.}
+  $\psi(S)$ amplitudes. The Bayesian probabilities were computed for a choice
+  of the prior probabilities of $C_{1}=0.7$ and $C_{2}=0.3$.}
 \label{fig:Gaus2}
 \end{figure}
 
