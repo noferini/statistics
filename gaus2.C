@@ -272,9 +272,35 @@ int main(){
   fProd[1][1]->SetTitle(";S;d(p_{2}#psi_{2})/dS");
 
   TCanvas *c3 = new TCanvas();
+  c3->SetBottomMargin(0.15);
+  c3->SetTopMargin(0.05);
+  c3->SetLeftMargin(0.15);
+  c3->SetRightMargin(0.05);
   hsig->Draw();
+  hsig->SetStats(0);
+  hsig->SetTitle(";S;input entries");
+  hsig->GetXaxis()->SetTitleSize(0.05);
+  hsig->GetXaxis()->SetNdivisions(408);
+  hsig->GetYaxis()->SetTitleSize(0.05);
+  hsig->GetYaxis()->SetNdivisions(408);
+  hsig->GetYaxis()->SetTitleOffset(1.2);
+
   hsim1->Draw("SAME");
   hsim2->Draw("SAME");
+  hsig->SetLineWidth(2);
+  hsim1->SetLineWidth(2);
+  hsim2->SetLineWidth(2);
+
+  TLegend *leg3 = new TLegend(0.63,0.63,0.93,0.93);
+  leg3->SetHeader("Simulation input");
+  leg3->Draw("SAME");
+  leg3->SetFillStyle(0);
+  leg3->AddEntry(hsig,"Total distribution","l");
+  leg3->AddEntry(hsim1,"Type 1 signals","l");
+  leg3->AddEntry(hsim2,"Type 2 signals","l");
+
+  c3->Print("figInput.png");
+  c3->Print("figInput.eps");
 
   TCanvas *c4 = new TCanvas();
   c4->SetBottomMargin(0.15);
