@@ -1,4 +1,8 @@
 \section{Examples}
+In this section we are going to present some practical examples
+to show the power and the convenience of our approach.
+All the results presented were obtained with a code which is public and
+available in (referenza).
 \subsection{A simple case}
 The first example we are going to report is very simple but quite instructive.
 We simulated a data sample cointaining two classes of event with Gaussian
@@ -81,7 +85,7 @@ when the separation is at the level of $1\sigma$.
 
 In any case the two methods are consistent as expected.
 
-\subsection{Characterizing classes using probabilities}
+\subsection{Characterizing event classes using probabilities}
 In the previous example we showed that the usage of probabilities as weights
 allows to extract the abundances of different classes in a very precise way.
 However, the real advantage of such a technique is not in such an operation
@@ -119,8 +123,8 @@ dependence of the priors probabilities on both the two new variables
 For this reason we report only results for the QM method which is independent
 of any guess of the abundances.
 
-In Fig.~\ref{fig:RecoEx2} the $x,y$-distribution are reported when using the QM amplitude
-to fill histograms.
+In Fig.~\ref{fig:RecoEx2} the $x,y$-distribution are reported when filling
+with all the events (weight=1) or with the QM amplitude ($\psi_1$ and $\psi_2$).
 As it can be noted the two classes of events are fully separated.
 There is still a light shadow which has memory of the existence of the other
 class and which is due to the statistical fluctuations of the finite
@@ -129,7 +133,7 @@ as in our case ($10^{6}$ events).
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=0.8\textwidth]{../png/figRecoCorr.png}
+\includegraphics[width=0.95\textwidth]{../png/figRecoCorr.png}
 \caption{}
 \label{fig:RecoEx2}
 \end{figure}
