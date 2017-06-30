@@ -89,9 +89,6 @@ int main(){
 
   c->Update();
 
-  c->Print("figGaus2.png");
-  c->Print("figGaus2.eps");
-
   Float_t val,signal;
   Int_t isp;
 
@@ -116,6 +113,10 @@ int main(){
   TProfile *hampl[nfunc];
   hampl[0] = new TProfile("hampl0",";signal;amplitude",1000,-20,20);
   hampl[1] = new TProfile("hampl1",";signal;amplitude",1000,-20,20);
+
+  TProfile *hprob[nfunc];
+  hprob[0] = new TProfile("hprob0",";signal;amplitude",65,-3,3.5);
+  hprob[1] = new TProfile("hprob1",";signal;amplitude",65,-3,3.5);
 
   Int_t counts[nfunc] = {0,0};
   Float_t recocounts[nfunc] = {0,0};
@@ -181,7 +182,10 @@ int main(){
       
       if(j==19) hsig1->Fill(signal,ampl[0]);
       if(j==19) hsig2->Fill(signal,ampl[1]);
-      
+
+      if(j==19) hprob[0]->Fill(signal,ampl[0]);
+      if(j==19) hprob[1]->Fill(signal,ampl[1]);
+
       recocountsBayes[0][j] += ampl[0];
       recocountsBayes[1][j] += ampl[1];
     }
@@ -213,6 +217,33 @@ int main(){
   fProd[0][1]->SetRange(-6,6);
   fProd[1][0]->SetRange(-6,6);
   fProd[1][1]->SetRange(-6,6);
+
+
+  hprob[0]->Draw("SAME");
+  hprob[1]->Draw("SAME");
+
+  hprob[0]->SetLineColor(4);
+  hprob[1]->SetLineColor(2);
+  hprob[0]->SetMarkerColor(4);
+  hprob[1]->SetMarkerColor(2);
+
+  hprob[0]->SetMarkerStyle(25);
+  hprob[1]->SetMarkerStyle(25);
+
+  hprob[0]->SetMarkerSize(0.5);
+  hprob[1]->SetMarkerSize(0.5);
+
+  TLegend *leg4 = new TLegend(0.75,0.64,0.9,0.85);
+  leg4->SetHeader("Bayesian");
+  leg4->AddEntry(hprob[0],"P_{1}(S)","P");
+  leg4->AddEntry(hprob[1],"P_{2}(S)","P");
+  leg4->Draw("SAME");
+  leg4->SetFillStyle(0);
+  leg4->SetBorderSize(0);
+  leg4->SetTextSize(0.05);
+
+  c->Print("figGaus2.png");
+  c->Print("figGaus2.eps");
 
   TCanvas *c2 = new TCanvas();
   c2->Divide(2,2);
@@ -365,7 +396,8 @@ int main(){
   fProd[0][1]->Write();
   fProd[1][0]->Write();
   fProd[1][1]->Write();
-
+  hprob[0]->Write();
+  hprob[1]->Write();
   fout->Close();
 
   return 0;
