@@ -6,6 +6,7 @@
 #include "TCanvas.h"
 #include "TRandom.h"
 #include "TH1F.h"
+#include "TH2F.h"
 #include "TProfile.h"
 #include "TLegend.h"
 #include "TPaveText.h"
@@ -17,7 +18,11 @@ int main(){
   const Int_t nfunc = 2;
   prova.SetNtype(nfunc);
   
-  Float_t abundances[nfunc] = {0.7,1};
+  TF1 *fAbundances = new TF1("fAbundances","0.8 - 0.3*x",0,1);
+  TF1 *fTrend[2];
+  fTrend[0] = new TF1("fTrend0","x",0,1);
+  fTrend[1] = new TF1("fTrend1","1-x",0,1);
+
 
   TF1 *ff1 = new TF1("ff1","gaus",-20,20);
   ff1->SetParameter(0,1);
@@ -118,6 +123,40 @@ int main(){
   hprob[0] = new TProfile("hprob0",";signal;amplitude",65,-3,3.5);
   hprob[1] = new TProfile("hprob1",";signal;amplitude",65,-3,3.5);
 
+  TProfile *htrend[2];
+  htrend[0] = new TProfile("htrend1",";x;y",100,0,1);
+  htrend[1] = new TProfile("htrend2",";x;y",100,0,1);
+
+  TH1F *hx[2];
+  hx[0] = new TH1F("hx1",";x",100,0,1);
+  hx[1] = new TH1F("hx2",";x",100,0,1);
+
+  TH2F *hxy = new TH2F("hxy",";x;y",120,-0.1,1.1,120,-0.1,1.1);
+  TH2F *hxyA[2];
+  hxyA[0] = new TH2F("hxy1",";x;y",120,-0.1,1.1,120,-0.1,1.1);
+  hxyA[1] = new TH2F("hxy2",";x;y",120,-0.1,1.1,120,-0.1,1.1);
+
+  TH1F *hpriors[2][20];
+  TProfile *htrendPriors[2][20];
+  TH2F *hxyPriors[2][20];
+  for(Int_t i=0;i < 20;i++){
+    hpriors[0][i] = new TH1F(Form("hprior1_%i",i),";x",100,0,1);
+    hpriors[1][i] = new TH1F(Form("hprior2_%i",i),";x",100,0,1);
+
+    htrendPriors[0][i] = new TProfile(Form("htrendPriors1_%i",i),";x;y",100,0,1);
+    htrendPriors[1][i] = new TProfile(Form("htrendPriors2_%i",i),";x;y",100,0,1);
+
+    hxyPriors[0][i] = new TH2F(Form("hxyPriors1_%i",i),";x;y",120,-0.1,1.1,120,-0.1,1.1);
+    hxyPriors[1][i] = new TH2F(Form("hxyPriors2_%i",i),";x;y",120,-0.1,1.1,120,-0.1,1.1);
+
+    if(i==0)
+      for(Int_t j=1;j <= 100;j++){
+	hpriors[0][i]->SetBinContent(j,0.5);
+	hpriors[1][i]->SetBinContent(j,0.5);
+      }
+  }
+
+
   Int_t counts[nfunc] = {0,0};
   Float_t recocounts[nfunc] = {0,0};
 
@@ -126,11 +165,18 @@ int main(){
 
   Double_t ampl[nfunc],norm;
 
-  for(Int_t i=0;i < 100000;i++){
+  Float_t x,y;
+
+  for(Int_t i=0;i < 1000000;i++){
     val = gRandom->Rndm();
-    
-    if(val < abundances[0]) isp=0;
+    x = gRandom->Rndm();
+
+    if(val < fAbundances->Eval(x)) isp=0;
     else isp=1;
+
+    y = fTrend[isp]->Eval(x) + gRandom->Gaus(0,0.05);
+
+    hxy->Fill(x,y);
 
     counts[isp]++;
 
@@ -139,11 +185,20 @@ int main(){
     ampl[0] = prova.EvaluateProb(0,signal);
     ampl[1] = prova.EvaluateProb(1,signal);
 
+    hxyA[0]->Fill(x,y,ampl[0]);
+    hxyA[1]->Fill(x,y,ampl[1]);
+
     hampl[0]->Fill(signal,ampl[0]);
     hampl[1]->Fill(signal,ampl[1]);
 
     recocounts[0] += ampl[0];
     recocounts[1] += ampl[1];
+
+    hx[0]->Fill(x,ampl[0]);
+    hx[1]->Fill(x,ampl[1]);
+
+    htrend[0]->Fill(x,y,ampl[0]);
+    htrend[1]->Fill(x,y,ampl[1]);
   }
 
   printf("counts[0] = %i -- recocounts[0] = %f -- error[%c] = %f\n",counts[0],recocounts[0],'%',(recocounts[0]/counts[0] -1)*100);
@@ -160,20 +215,27 @@ int main(){
     recocountsBayes[0][j] =0;
     recocountsBayes[1][j] =0;
 
-    for(Int_t i=0;i < 100000;i++){
+    for(Int_t i=0;i < 1000000;i++){
       val = gRandom->Rndm();
-      
-      if(val < abundances[0]) isp=0;
+      x = gRandom->Rndm();
+
+      if(val < fAbundances->Eval(x)) isp=0;
       else isp=1;
-      
+
+      y = fTrend[isp]->Eval(x) + gRandom->Gaus(0,0.05);
+
       signal = rf[isp]->GetRandom();
       
-      hsig->Fill(signal);
-      if(isp==0) hsim1->Fill(signal);
-      if(isp==1) hsim2->Fill(signal);
-      
-      ampl[0] = rf[0]->Eval(signal)*recocountsBayes[0][j-1];
-      ampl[1] = rf[1]->Eval(signal)*recocountsBayes[1][j-1];
+      if(j==19){
+	hsig->Fill(signal);
+	if(isp==0) hsim1->Fill(signal);
+	if(isp==1) hsim2->Fill(signal);
+      }
+//       ampl[0] = rf[0]->Eval(signal)*recocountsBayes[0][j-1];
+//       ampl[1] = rf[1]->Eval(signal)*recocountsBayes[1][j-1];
+
+      ampl[0] = rf[0]->Eval(signal)*hpriors[0][j-1]->Interpolate(x);
+      ampl[1] = rf[1]->Eval(signal)*hpriors[1][j-1]->Interpolate(x);
       
       norm = ampl[0]+ampl[1] + 1E-10;
       
@@ -188,6 +250,15 @@ int main(){
 
       recocountsBayes[0][j] += ampl[0];
       recocountsBayes[1][j] += ampl[1];
+
+      hpriors[0][j]->Fill(x,ampl[0]);
+      hpriors[1][j]->Fill(x,ampl[1]);
+
+      htrendPriors[0][j]->Fill(x,y,ampl[0]);
+      htrendPriors[1][j]->Fill(x,y,ampl[1]);
+
+      hxyPriors[0][j]->Fill(x,y,ampl[0]);
+      hxyPriors[1][j]->Fill(x,y,ampl[1]);
     }
     Float_t tot = recocountsBayes[0][j] + recocountsBayes[1][j];
     recocountsBayes[0][j] /= tot;
@@ -350,8 +421,8 @@ int main(){
   g[0]->GetYaxis()->SetNdivisions(408);
 
   TLine *l[2];
-  l[0] = new TLine(1,recocounts[0]*1E-5,20,recocounts[0]*1E-5);
-  l[1] = new TLine(1,recocounts[1]*1E-5,20,recocounts[1]*1E-5);
+  l[0] = new TLine(1,recocounts[0]*1E-6,20,recocounts[0]*1E-6);
+  l[1] = new TLine(1,recocounts[1]*1E-6,20,recocounts[1]*1E-6);
 
   l[0]->SetLineColor(4);
   l[0]->SetLineWidth(3);
@@ -398,6 +469,19 @@ int main(){
   fProd[1][1]->Write();
   hprob[0]->Write();
   hprob[1]->Write();
+  hx[0]->Write();
+  hx[1]->Write();
+  htrend[0]->Write();
+  htrend[1]->Write();
+  hxy->Write();
+  hxyA[0]->Write();
+  hxyA[1]->Write();
+  hpriors[0][19]->Write();
+  hpriors[1][19]->Write();
+  htrendPriors[0][19]->Write();
+  htrendPriors[1][19]->Write();
+  hxyPriors[0][19]->Write();
+  hxyPriors[1][19]->Write();
   fout->Close();
 
   return 0;
