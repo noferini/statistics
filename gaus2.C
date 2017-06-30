@@ -41,10 +41,10 @@ int main(){
   ff1 = prova.GetProbabilityDensityStar(0);
   ff2 = prova.GetProbabilityDensityStar(1);
 
-  f1->SetLineColor(1);
+  f1->SetLineColor(4);
   f2->SetLineColor(2);
 
-  ff1->SetLineColor(1);
+  ff1->SetLineColor(4);
   ff2->SetLineColor(2);
 
   ff1->SetLineStyle(2);
