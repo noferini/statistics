@@ -221,10 +221,23 @@ int main(){
   fProd[1][1]->SetMaximum(0.65);
   fProd[1][1]->SetMinimum(-0.2);
 
-  fProd[0][0]->SetTitle(";S;df/dS");
-  fProd[0][1]->SetTitle(";S;df/dS");
-  fProd[1][0]->SetTitle(";S;df/dS");
-  fProd[1][1]->SetTitle(";S;df/dS");
+  c2->Update();
+
+  for(Int_t i=0;i<2;i++){
+    for(Int_t j=0;j<2;j++){
+      fProd[i][j]->GetXaxis()->SetTitleSize(0.05);
+      fProd[i][j]->GetYaxis()->SetTitleSize(0.05);
+      fProd[i][j]->GetXaxis()->SetNdivisions(408);
+      fProd[i][j]->GetYaxis()->SetNdivisions(408);
+    }
+  }
+
+  c2->Update();
+
+  fProd[0][0]->SetTitle(";S;d(p_{1}#psi_{1})/dS");
+  fProd[0][1]->SetTitle(";S;d(p_{2}#psi_{1})/dS");
+  fProd[1][0]->SetTitle(";S;d(p_{1}#psi_{2})/dS");
+  fProd[1][1]->SetTitle(";S;d(p_{2}#psi_{2})/dS");
 
   TFile *fout = new TFile("gaus2.root","RECREATE");
   hsig->Write();
