@@ -104,10 +104,10 @@ int main(){
   TH1F *hsim1 = new TH1F("hsim1",";signal",600,-6,6);
   TH1F *hsim2 = new TH1F("hsim2",";signal",600,-6,6);
 
-  hsig1->SetLineColor(6);
+  hsig1->SetLineColor(4);
   hsig2->SetLineColor(2);
 
-  hsim1->SetLineColor(6);
+  hsim1->SetLineColor(4);
   hsim2->SetLineColor(2);
 
   hsim1->SetLineStyle(2);
@@ -194,8 +194,8 @@ int main(){
   g[0] = new TGraph(20,istep,recocountsBayes[0]);
   g[1] = new TGraph(20,istep,recocountsBayes[1]);
 
-  g[0]->SetLineColor(6);
-  g[0]->SetMarkerColor(6);
+  g[0]->SetLineColor(4);
+  g[0]->SetMarkerColor(4);
   g[0]->SetMarkerStyle(20);
   g[1]->SetLineColor(2);
   g[1]->SetMarkerColor(2);
@@ -322,7 +322,7 @@ int main(){
   l[0] = new TLine(1,recocounts[0]*1E-5,20,recocounts[0]*1E-5);
   l[1] = new TLine(1,recocounts[1]*1E-5,20,recocounts[1]*1E-5);
 
-  l[0]->SetLineColor(6);
+  l[0]->SetLineColor(4);
   l[0]->SetLineWidth(3);
   l[0]->SetLineStyle(2);
   l[1]->SetLineColor(2);
