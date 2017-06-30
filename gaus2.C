@@ -9,6 +9,8 @@
 #include "TProfile.h"
 #include "TLegend.h"
 #include "TPaveText.h"
+#include "TGraph.h"
+#include "TLine.h"
 
 int main(){
   Function prova;
@@ -69,7 +71,7 @@ int main(){
   leg->AddEntry(f1,"p_{1}(S)","l");
   leg->AddEntry(f2,"p_{2}(S)","l");
   leg->AddEntry(ff1,"#psi_{1}(S)","l");
-  leg->AddEntry(ff2,"#psi_{1}(S)","l");
+  leg->AddEntry(ff2,"#psi_{2}(S)","l");
 
   leg->Draw("SAME");
   leg->SetBorderSize(0);
@@ -95,12 +97,12 @@ int main(){
 
   TF1 *rf[nfunc] = {f1,f2};
 
-  TH1F *hsig = new TH1F("hsig",";signal",1000,-20,20);
-  TH1F *hsig1 = new TH1F("hsig1",";signal",1000,-20,20);
-  TH1F *hsig2 = new TH1F("hsig2",";signal",1000,-20,20);
+  TH1F *hsig = new TH1F("hsig",";signal",600,-6,6);
+  TH1F *hsig1 = new TH1F("hsig1",";signal",600,-6,6);
+  TH1F *hsig2 = new TH1F("hsig2",";signal",600,-6,6);
 
-  TH1F *hsim1 = new TH1F("hsim1",";signal",1000,-20,20);
-  TH1F *hsim2 = new TH1F("hsim2",";signal",1000,-20,20);
+  TH1F *hsim1 = new TH1F("hsim1",";signal",600,-6,6);
+  TH1F *hsim2 = new TH1F("hsim2",";signal",600,-6,6);
 
   hsig1->SetLineColor(6);
   hsig2->SetLineColor(2);
@@ -117,6 +119,8 @@ int main(){
 
   Int_t counts[nfunc] = {0,0};
   Float_t recocounts[nfunc] = {0,0};
+
+  Float_t recocountsBayes[nfunc][20];
 
 
   Double_t ampl[nfunc],norm;
@@ -144,30 +148,58 @@ int main(){
   printf("counts[0] = %i -- recocounts[0] = %f -- error[%c] = %f\n",counts[0],recocounts[0],'%',(recocounts[0]/counts[0] -1)*100);
   printf("counts[1] = %i -- recocounts[1] = %f -- error[%c] = %f\n",counts[1],recocounts[1],'%',(recocounts[1]/counts[1] -1)*100);
 
-  for(Int_t i=0;i < 100000;i++){
-    val = gRandom->Rndm();
-    
-    if(val < abundances[0]) isp=0;
-    else isp=1;
+  
+  recocountsBayes[0][0]=0.5;
+  recocountsBayes[1][0]=0.5;
+  Float_t istep[20];
+  istep[0]=1;
+  for(Int_t j=1;j < 20;j++){
+    istep[j] = j+1;
 
-    signal = rf[isp]->GetRandom();
+    recocountsBayes[0][j] =0;
+    recocountsBayes[1][j] =0;
 
-    hsig->Fill(signal);
-    if(isp==0) hsim1->Fill(signal);
-    if(isp==1) hsim2->Fill(signal);
-
-    ampl[0] = rf[0]->Eval(signal)*recocounts[0];
-    ampl[1] = rf[1]->Eval(signal)*recocounts[1];
-
-    norm = ampl[0]+ampl[1] + 1E-10;
-
-    ampl[0] /= norm;
-    ampl[1] /= norm;
-
-    hsig1->Fill(signal,ampl[0]);
-    hsig2->Fill(signal,ampl[1]);
-
+    for(Int_t i=0;i < 100000;i++){
+      val = gRandom->Rndm();
+      
+      if(val < abundances[0]) isp=0;
+      else isp=1;
+      
+      signal = rf[isp]->GetRandom();
+      
+      hsig->Fill(signal);
+      if(isp==0) hsim1->Fill(signal);
+      if(isp==1) hsim2->Fill(signal);
+      
+      ampl[0] = rf[0]->Eval(signal)*recocountsBayes[0][j-1];
+      ampl[1] = rf[1]->Eval(signal)*recocountsBayes[1][j-1];
+      
+      norm = ampl[0]+ampl[1] + 1E-10;
+      
+      ampl[0] /= norm;
+      ampl[1] /= norm;
+      
+      if(j==19) hsig1->Fill(signal,ampl[0]);
+      if(j==19) hsig2->Fill(signal,ampl[1]);
+      
+      recocountsBayes[0][j] += ampl[0];
+      recocountsBayes[1][j] += ampl[1];
+    }
+    Float_t tot = recocountsBayes[0][j] + recocountsBayes[1][j];
+    recocountsBayes[0][j] /= tot;
+    recocountsBayes[1][j] /= tot;
   }
+
+  TGraph *g[2];
+  g[0] = new TGraph(20,istep,recocountsBayes[0]);
+  g[1] = new TGraph(20,istep,recocountsBayes[1]);
+
+  g[0]->SetLineColor(6);
+  g[0]->SetMarkerColor(6);
+  g[0]->SetMarkerStyle(20);
+  g[1]->SetLineColor(2);
+  g[1]->SetMarkerColor(2);
+  g[1]->SetMarkerStyle(21);
 
   TF1 *fProd[2][2];
 
@@ -239,6 +271,54 @@ int main(){
   fProd[1][0]->SetTitle(";S;d(p_{1}#psi_{2})/dS");
   fProd[1][1]->SetTitle(";S;d(p_{2}#psi_{2})/dS");
 
+  TCanvas *c3 = new TCanvas();
+  hsig->Draw();
+  hsim1->Draw("SAME");
+  hsim2->Draw("SAME");
+
+  TCanvas *c4 = new TCanvas();
+  c4->SetBottomMargin(0.15);
+  c4->SetTopMargin(0.05);
+  c4->SetLeftMargin(0.15);
+  c4->SetRightMargin(0.05);
+
+  g[0]->Draw("AP");
+  g[1]->Draw("P");
+  g[0]->SetMaximum(1);
+  g[0]->SetMinimum(0);
+  g[0]->SetTitle(";N_{steps} Bayesian approach;Relative abundances");
+  g[0]->GetXaxis()->SetTitleSize(0.05);
+  g[0]->GetXaxis()->SetNdivisions(408);
+  g[0]->GetYaxis()->SetTitleSize(0.05);
+  g[0]->GetYaxis()->SetNdivisions(408);
+
+  TLine *l[2];
+  l[0] = new TLine(1,recocounts[0]*1E-5,20,recocounts[0]*1E-5);
+  l[1] = new TLine(1,recocounts[1]*1E-5,20,recocounts[1]*1E-5);
+
+  l[0]->SetLineColor(6);
+  l[0]->SetLineWidth(3);
+  l[0]->SetLineStyle(2);
+  l[1]->SetLineColor(2);
+  l[1]->SetLineWidth(3);
+  l[1]->SetLineStyle(2);
+
+  l[0]->Draw("SAME");
+  l[1]->Draw("SAME");
+
+  TLegend *leg2 = new TLegend(0.2,0.75,0.9,0.93);
+  leg2->SetHeader("#Delta_{12} = 2");
+  leg2->Draw("SAME");
+  leg2->SetFillStyle(0);
+  leg2->AddEntry(g[0],"1) Bayesian iterative","lp");
+  leg2->AddEntry(g[1],"2) Bayesian iterative","lp");
+  leg2->AddEntry(l[0],"1) QM approach","l");
+  leg2->AddEntry(l[1],"2) QM approach","l");
+  leg2->SetNColumns(2);
+
+  c4->Print("figIterative.png");
+  c4->Print("figIterative.eps");
+
   TFile *fout = new TFile("gaus2.root","RECREATE");
   hsig->Write();
   hampl[0]->Write();
@@ -249,6 +329,8 @@ int main(){
   hsim2->Write();
   c->Write();
   c2->Write();
+  c3->Write();
+  c4->Write();
   f1->Write();
   f2->Write();
   ff1->Write();
