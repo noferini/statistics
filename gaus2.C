@@ -12,12 +12,23 @@
 #include "TPaveText.h"
 #include "TGraph.h"
 #include "TLine.h"
+#include "TMath.h"
 
 int main(){
   Function prova;
   const Int_t nfunc = 2;
   prova.SetNtype(nfunc);
+
+  printf("Test procedure on two classes described by Gaussian distribution and separated by N sigma\n");
   
+  printf("Please, insert the N sigma separation\n");
+  Float_t sigma=2;
+  scanf("%f",&sigma);
+
+  printf("N sigma separtion = %f\n",sigma);
+
+  const Int_t nmaxstep = TMath::Max(Int_t(30/sigma/sigma),5);
+
   TF1 *fAbundances = new TF1("fAbundances","0.8 - 0.3*x",0,1);
   TF1 *fTrend[2];
   fTrend[0] = new TF1("fTrend0","x",0,1);
@@ -26,12 +37,12 @@ int main(){
 
   TF1 *ff1 = new TF1("ff1","gaus",-20,20);
   ff1->SetParameter(0,1);
-  ff1->SetParameter(1,-1);
+  ff1->SetParameter(1,-sigma/2);
   ff1->SetParameter(2, 1);
   ff1->SetParameter(0,1./ff1->Integral(-20,20));
   TF1 *ff2 = new TF1("ff2","gaus",-20,20);
   ff2->SetParameter(0,1);
-  ff2->SetParameter(1,1);
+  ff2->SetParameter(1,sigma/2);
   ff2->SetParameter(2, 1);
   ff2->SetParameter(0,1./ff2->Integral(-20,20));
 
@@ -139,10 +150,12 @@ int main(){
   hxyS[0] = new TH2F("hxyS1",";x;y",120,-0.1,1.1,120,-0.1,1.1);
   hxyS[1] = new TH2F("hxyS2",";x;y",120,-0.1,1.1,120,-0.1,1.1);
 
-  TH1F *hpriors[2][20];
-  TProfile *htrendPriors[2][20];
-  TH2F *hxyPriors[2][20];
-  for(Int_t i=0;i < 20;i++){
+
+
+  TH1F *hpriors[2][nmaxstep];
+  TProfile *htrendPriors[2][nmaxstep];
+  TH2F *hxyPriors[2][nmaxstep];
+  for(Int_t i=0;i < nmaxstep;i++){
     hpriors[0][i] = new TH1F(Form("hprior1_%i",i),";x",100,0,1);
     hpriors[1][i] = new TH1F(Form("hprior2_%i",i),";x",100,0,1);
 
@@ -163,14 +176,16 @@ int main(){
   Int_t counts[nfunc] = {0,0};
   Float_t recocounts[nfunc] = {0,0};
 
-  Float_t recocountsBayes[nfunc][20];
+  Float_t recocountsBayes[nfunc][nmaxstep];
 
 
   Double_t ampl[nfunc],norm;
 
   Float_t x,y;
 
-  for(Int_t i=0;i < 10000000;i++){
+  Int_t nev = 1e6;
+
+  for(Int_t i=0;i < nev;i++){
     val = gRandom->Rndm();
     x = gRandom->Rndm();
 
@@ -211,9 +226,9 @@ int main(){
   
   recocountsBayes[0][0]=0.5;
   recocountsBayes[1][0]=0.5;
-  Float_t istep[20];
+  Float_t istep[nmaxstep];
   istep[0]=1;
-  for(Int_t j=1;j < 20;j++){
+  for(Int_t j=1;j < nmaxstep;j++){
     istep[j] = j+1;
 
     recocountsBayes[0][j] =0;
@@ -230,7 +245,7 @@ int main(){
 
       signal = rf[isp]->GetRandom();
       
-      if(j==19){
+      if(j==nmaxstep-1){
 	hsig->Fill(signal);
 	if(isp==0) hsim1->Fill(signal);
 	if(isp==1) hsim2->Fill(signal);
@@ -238,19 +253,27 @@ int main(){
 //       ampl[0] = rf[0]->Eval(signal)*recocountsBayes[0][j-1];
 //       ampl[1] = rf[1]->Eval(signal)*recocountsBayes[1][j-1];
 
+
+      // only x dependence
       ampl[0] = rf[0]->Eval(signal)*hpriors[0][j-1]->Interpolate(x);
       ampl[1] = rf[1]->Eval(signal)*hpriors[1][j-1]->Interpolate(x);
-      
+
+      // x,y dependence (if you want to see the role of y on priors for Bayesian approach, try to comment the next 4 lines
+      if(j>1){ // not at step 1
+	ampl[0] = rf[0]->Eval(signal)*hxyPriors[0][j-1]->GetBinContent(hxyPriors[0][j-1]->GetXaxis()->FindBin(x),hxyPriors[0][j-1]->GetYaxis()->FindBin(y));
+	ampl[1] = rf[1]->Eval(signal)*hxyPriors[1][j-1]->GetBinContent(hxyPriors[0][j-1]->GetXaxis()->FindBin(x),hxyPriors[0][j-1]->GetYaxis()->FindBin(y));
+      }
+
       norm = ampl[0]+ampl[1] + 1E-10;
       
       ampl[0] /= norm;
       ampl[1] /= norm;
       
-      if(j==19) hsig1->Fill(signal,ampl[0]);
-      if(j==19) hsig2->Fill(signal,ampl[1]);
+      if(j==nmaxstep-1) hsig1->Fill(signal,ampl[0]);
+      if(j==nmaxstep-1) hsig2->Fill(signal,ampl[1]);
 
-      if(j==19) hprob[0]->Fill(signal,ampl[0]);
-      if(j==19) hprob[1]->Fill(signal,ampl[1]);
+      if(j==nmaxstep-1) hprob[0]->Fill(signal,ampl[0]);
+      if(j==nmaxstep-1) hprob[1]->Fill(signal,ampl[1]);
 
       recocountsBayes[0][j] += ampl[0];
       recocountsBayes[1][j] += ampl[1];
@@ -270,8 +293,8 @@ int main(){
   }
 
   TGraph *g[2];
-  g[0] = new TGraph(20,istep,recocountsBayes[0]);
-  g[1] = new TGraph(20,istep,recocountsBayes[1]);
+  g[0] = new TGraph(nmaxstep,istep,recocountsBayes[0]);
+  g[1] = new TGraph(nmaxstep,istep,recocountsBayes[1]);
 
   g[0]->SetLineColor(4);
   g[0]->SetMarkerColor(4);
@@ -429,8 +452,8 @@ int main(){
   g[0]->GetYaxis()->SetNdivisions(408);
 
   TLine *l[2];
-  l[0] = new TLine(1,recocounts[0]*1E-6,20,recocounts[0]*1E-6);
-  l[1] = new TLine(1,recocounts[1]*1E-6,20,recocounts[1]*1E-6);
+  l[0] = new TLine(1,recocounts[0]/nev,nmaxstep,recocounts[0]/nev);
+  l[1] = new TLine(1,recocounts[1]/nev,nmaxstep,recocounts[1]/nev);
 
   l[0]->SetLineColor(4);
   l[0]->SetLineWidth(3);
@@ -486,12 +509,12 @@ int main(){
   hxyA[1]->Write();
   hxyS[0]->Write();
   hxyS[1]->Write();
-  hpriors[0][19]->Write();
-  hpriors[1][19]->Write();
-  htrendPriors[0][19]->Write();
-  htrendPriors[1][19]->Write();
-  hxyPriors[0][19]->Write();
-  hxyPriors[1][19]->Write();
+  hpriors[0][nmaxstep-1]->Write();
+  hpriors[1][nmaxstep-1]->Write();
+  htrendPriors[0][nmaxstep-1]->Write();
+  htrendPriors[1][nmaxstep-1]->Write();
+  hxyPriors[0][nmaxstep-1]->Write();
+  hxyPriors[1][nmaxstep-1]->Write();
   fout->Close();
 
   return 0;
