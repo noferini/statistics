@@ -170,7 +170,7 @@ int main(){
 
   Float_t x,y;
 
-  for(Int_t i=0;i < 1000000;i++){
+  for(Int_t i=0;i < 10000000;i++){
     val = gRandom->Rndm();
     x = gRandom->Rndm();
 
@@ -326,7 +326,7 @@ int main(){
   fProd[0][0]->Draw();
   TPaveText t1(0.5,0.4,5.5,0.6);
   t1.SetBorderSize(0);
-  t1.AddText("p_{1} #psi_{1} #rightarrow #int_{} p_{2} #psi_{1} = 1");
+  t1.AddText("p_{1} #psi_{1} #rightarrow #int_{} p_{1} #psi_{1} = 1");
   t1.SetFillStyle(0);
   t1.Draw("SAME");
   fProd[0][0]->SetMaximum(0.65);
@@ -367,15 +367,19 @@ int main(){
       fProd[i][j]->GetYaxis()->SetTitleSize(0.05);
       fProd[i][j]->GetXaxis()->SetNdivisions(408);
       fProd[i][j]->GetYaxis()->SetNdivisions(408);
+      fProd[i][j]->SetLineColor(1);
     }
   }
 
   c2->Update();
 
-  fProd[0][0]->SetTitle(";S;d(p_{1}#psi_{1})/dS");
-  fProd[0][1]->SetTitle(";S;d(p_{2}#psi_{1})/dS");
-  fProd[1][0]->SetTitle(";S;d(p_{1}#psi_{2})/dS");
-  fProd[1][1]->SetTitle(";S;d(p_{2}#psi_{2})/dS");
+  fProd[0][0]->SetTitle(";S;p_{1}#psi_{1}");
+  fProd[0][1]->SetTitle(";S;p_{2}#psi_{1}");
+  fProd[1][0]->SetTitle(";S;p_{1}#psi_{2}");
+  fProd[1][1]->SetTitle(";S;p_{2}#psi_{2}");
+
+  c2->Print("figSP.png");
+  c2->Print("figSP.eps");
 
   TCanvas *c3 = new TCanvas();
   c3->SetBottomMargin(0.15);

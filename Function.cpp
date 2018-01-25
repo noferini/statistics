@@ -61,10 +61,12 @@ TF1 *Function::GetProbabilityDensityStar(Int_t itype){
 
 Double_t Function::ScalarProductOrFunc(Int_t itype1,Int_t itype2) {
   if(!fFuncSPor[itype1*GetNtype() + itype2]){
-    TString function(GetProbabilityDensity(itype1)->GetName());
-    function.Append(" * ");
-    function.Append(GetProbabilityDensity(itype2)->GetName());
-    
+    TString function("(");
+    function.Append(GetProbabilityDensity(itype1)->GetExpFormula("par"));
+    function.Append(") * (");
+    function.Append(GetProbabilityDensity(itype2)->GetExpFormula("par"));
+    function.Append(")");
+
     TString namefunc(GetProbabilityDensity(itype1)->GetName());
     namefunc.Append("_");
     namefunc.Append(GetProbabilityDensity(itype2)->GetName());
@@ -118,25 +120,30 @@ void Function::SetMatrix(){
     TString namefunc("T_");
     namefunc.Append(GetProbabilityDensity(i)->GetName());
 
-    TString function(Form("((%f * %s)",GetInvMatrix()[i][0],GetProbabilityDensity(0)->GetName()));
-    for(Int_t j=1;j < GetNtype();j++)
-      function.Append(Form("+(%f * %s)",GetInvMatrix()[i][j],GetProbabilityDensity(j)->GetName()));
-
-    function.Append(")");
+    TString function("");
+    for(Int_t j=0;j < GetNtype();j++){
+      if(j >0 && GetInvMatrix()[i][j] >= 0)  function.Append("+");
+      function.Append(Form("%f*(",GetInvMatrix()[i][j]));
+      function.Append(GetProbabilityDensity(j)->GetExpFormula("par"));
+      function.Append(")");
+    }
 
     fFuncStar[i] = new TF1(namefunc.Data(),function.Data(),-20,20);
 
-
     for(Int_t j=0;j < GetNtype();j++){
       TString namefunc2("SP_");
-      TString function2(function.Data());
+      TString function2("(");
+      function2.Append(function.Data());
+      function2.Append(")");
+
       namefunc2.Append(GetProbabilityDensityStar(i)->GetName());
       namefunc2.Append("_");
       namefunc2.Append(GetProbabilityDensity(j)->GetName());
 
       function2.Append("*(");
 
-      function2.Append(GetProbabilityDensity(j)->GetName());
+      //function2.Append(GetProbabilityDensity(j)->GetName());
+      function2.Append(GetProbabilityDensity(j)->GetExpFormula("par"));
       
       function2.Append(")");
 
@@ -159,5 +166,5 @@ Double_t Function::GetIntegral(TF1 *f){
 //   ROOT::Math::WrappedTF1 wf(*f);
 //   ig.SetFunction(wf);
 //   double val2 = ig.Integral(-20,20);
-  return f->Integral(-20,20,param,1e-10);
+  return f->Integral(-20,20);//,param,1e-10);
 }
